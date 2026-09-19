@@ -2,18 +2,24 @@ name: Release
 
 on:
   push:
-    branches: [main]
+    branches: [main, next]
+  workflow_dispatch:
+    inputs:
+      tag:
+        required: true
+        default: preview
 
 permissions:
   contents: read
 
 concurrency:
-  group: release
+  group: release-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   release:
     name: Version or publish
+    if: github.event_name == 'push'
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -37,5 +43,37 @@ jobs:
           version-script: pnpm run version
           publish-script: pnpm run release
           commit-message: 'chore: version packages'
-          pr-title: 'chore: version packages'
+          pr-title: "${{ github.ref_name == 'next' && 'chore: version packages (beta)' || 'chore: version packages' }}"
           github-token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  snapshot:
+    name: Publish snapshot
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check && pnpm typecheck && pnpm test
+      - name: Version and publish snapshot
+        env:
+          SNAPSHOT_TAG: ${{ inputs.tag }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if ! [[ "$SNAPSHOT_TAG" =~ ^[a-z0-9-]+$ ]] || [ "$SNAPSHOT_TAG" = "latest" ]; then
+            echo "::error::dist-tag invalide: $SNAPSHOT_TAG"; exit 1
+          fi
+          pnpm changeset version --snapshot "$SNAPSHOT_TAG"
+          pnpm build
+          pnpm changeset publish --tag "$SNAPSHOT_TAG" --no-git-tag

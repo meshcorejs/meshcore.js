@@ -51,9 +51,6 @@ importers:
         specifier: ^13.0.0
         version: 13.0.0(supports-color@7.2.0)
     devDependencies:
-      '@meshcorejs/testing':
-        specifier: workspace:*
-        version: link:../../packages/testing
       tsx:
         specifier: ^4.21.0
         version: 4.23.13

@@ -1,0 +1,50 @@
+{
+  "name": "@meshcorejs/protocol",
+  "version": "0.1.0",
+  "description": "MeshCore Companion Radio protocol codec (framing, commands, responses). No I/O.",
+  "keywords": [
+    "meshcore",
+    "lora",
+    "mesh",
+    "companion",
+    "protocol",
+    "codec"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Théo Lagache",
+    "url": "https://github.com/asuniia"
+  },
+  "homepage": "https://github.com/meshcorejs/meshcore.js/tree/main/packages/protocol#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meshcorejs/meshcore.js.git",
+    "directory": "packages/protocol"
+  },
+  "bugs": {
+    "url": "https://github.com/meshcorejs/meshcore.js/issues"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  }
+}

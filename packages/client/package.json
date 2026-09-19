@@ -1,0 +1,55 @@
+{
+  "name": "@meshcorejs/client",
+  "version": "0.1.0",
+  "description": "Build MeshCore bots: a Client with events, managers, builders, plugins and permissions.",
+  "keywords": [
+    "meshcore",
+    "lora",
+    "mesh",
+    "bot",
+    "companion",
+    "discord.js"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Théo Lagache",
+    "url": "https://github.com/asuniia"
+  },
+  "homepage": "https://github.com/meshcorejs/meshcore.js/tree/main/packages/client#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meshcorejs/meshcore.js.git",
+    "directory": "packages/client"
+  },
+  "bugs": {
+    "url": "https://github.com/meshcorejs/meshcore.js/issues"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@meshcorejs/protocol": "workspace:*",
+    "@meshcorejs/transports": "workspace:*",
+    "croner": "^10.0.1"
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "name": "@meshcorejs/testing",
+  "version": "0.1.0",
+  "description": "Test @meshcorejs/client bots without a radio: fake radio, simulated time, DM and channel helpers.",
+  "keywords": [
+    "meshcore",
+    "lora",
+    "mesh",
+    "bot",
+    "testing",
+    "vitest"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Théo Lagache",
+    "url": "https://github.com/asuniia"
+  },
+  "homepage": "https://github.com/meshcorejs/meshcore.js/tree/main/packages/testing#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meshcorejs/meshcore.js.git",
+    "directory": "packages/testing"
+  },
+  "bugs": {
+    "url": "https://github.com/meshcorejs/meshcore.js/issues"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@meshcorejs/protocol": "workspace:*",
+    "@meshcorejs/transports": "workspace:*",
+    "@sinonjs/fake-timers": "^15.0.1"
+  },
+  "peerDependencies": {
+    "@meshcorejs/client": "workspace:^"
+  },
+  "devDependencies": {
+    "@meshcorejs/client": "workspace:*"
+  }
+}

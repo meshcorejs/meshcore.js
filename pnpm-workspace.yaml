@@ -1,0 +1,15 @@
+packages:
+  - packages/*
+  - examples/*
+
+# serialport and @abandonware/noble are optional peer dependencies with native builds:
+# never install them implicitly. Tests use injected fakes instead.
+autoInstallPeers: false
+
+# tsx (used by examples) needs esbuild's install script; serialport builds native bindings
+# when a bot talks to a radio over USB.
+allowBuilds:
+  '@abandonware/bluetooth-hci-socket': true
+  '@abandonware/noble': true
+  '@serialport/bindings-cpp': true
+  esbuild: true

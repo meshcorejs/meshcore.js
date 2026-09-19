@@ -1,0 +1,71 @@
+{
+  "name": "@meshcorejs/transports",
+  "version": "0.1.0",
+  "description": "Serial, TCP and BLE transports for MeshCore Companion radios, plus an in-memory fake radio for tests.",
+  "keywords": [
+    "meshcore",
+    "lora",
+    "mesh",
+    "companion",
+    "serial",
+    "tcp",
+    "ble"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Théo Lagache",
+    "url": "https://github.com/asuniia"
+  },
+  "homepage": "https://github.com/meshcorejs/meshcore.js/tree/main/packages/transports#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meshcorejs/meshcore.js.git",
+    "directory": "packages/transports"
+  },
+  "bugs": {
+    "url": "https://github.com/meshcorejs/meshcore.js/issues"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./mock": {
+      "source": "./src/mock/index.ts",
+      "types": "./dist/mock/index.d.ts",
+      "default": "./dist/mock/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@meshcorejs/protocol": "workspace:*"
+  },
+  "peerDependencies": {
+    "@abandonware/noble": ">=1.9.2-25",
+    "serialport": ">=12"
+  },
+  "peerDependenciesMeta": {
+    "@abandonware/noble": {
+      "optional": true
+    },
+    "serialport": {
+      "optional": true
+    }
+  }
+}

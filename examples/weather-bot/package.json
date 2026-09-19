@@ -1,0 +1,22 @@
+{
+  "name": "@meshcorejs/exemple-weather-bot",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Example meshcore.js bot: Open-Meteo forecasts on demand and every morning on a channel.",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch --env-file=.env src/main.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node --env-file=.env dist/main.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@meshcorejs/client": "workspace:*",
+    "serialport": "^13.0.0"
+  },
+  "devDependencies": {
+    "@meshcorejs/testing": "workspace:*",
+    "tsx": "^4.21.0"
+  },
+  "license": "MIT"
+}

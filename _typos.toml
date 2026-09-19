@@ -1,0 +1,12 @@
+[default]
+extend-ignore-re = ["(?i)meshcore://[0-9a-f]+", "[0-9a-f]{12,}"]
+
+[default.extend-words]
+invalide = "invalide"
+cours = "cours"
+sur = "sur"
+allo = "allo"
+trian = "trian"
+
+[files]
+extend-exclude = ["pnpm-lock.yaml", "dist", "coverage", "docs/superpowers", ".superpowers", "*.hex"]

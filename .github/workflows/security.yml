@@ -32,6 +32,6 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: getplumber/plumber@3feac69e925e9771f8a495f4177af754d568c1ad # v0.4.48
+      - uses: getplumber/plumber@10837e44cddfed934eaa2b509e677286af23e149 # v0.4.63
         with:
           score-push: ${{ github.event_name == 'push' }}

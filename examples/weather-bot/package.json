@@ -15,7 +15,6 @@
     "serialport": "^13.0.0"
   },
   "devDependencies": {
-    "@meshcorejs/testing": "workspace:*",
     "tsx": "^4.21.0"
   },
   "license": "MIT"

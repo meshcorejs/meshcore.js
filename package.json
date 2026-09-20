@@ -25,9 +25,9 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
     "@biomejs/biome": "2.5.14",
-    "@changesets/changelog-github": "~0.5.2",
+    "@changesets/changelog-github": "~1.0.1",
     "@changesets/cli": "^3.0.3",
-    "@types/node": "^22.20.3",
+    "@types/node": "^26.6.1",
     "@vitest/coverage-v8": "^5.0.1",
     "knip": "^6.37.0",
     "publint": "~0.3.24",

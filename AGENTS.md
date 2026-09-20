@@ -79,7 +79,8 @@ Toolchain
   dependencies to sources (`customConditions: ["source"]`); `tsconfig.build.json` resets it so builds use `dist`.
 - `serialport` and `@abandonware/noble` are optional peer dependencies of `transports`: never add them to a
   package's `dependencies`, never import them statically. Tests inject fakes.
-- `apps/docs` pins TypeScript 6.0.x (TypeDoc has no TypeScript 7 support); everything else uses 7. `pnpm build`
+- `apps/docs` pins TypeScript 6.0.x (TypeDoc has no TypeScript 7 support); everything else uses 7. Dependabot
+  ignores TypeScript majors for that reason (`dependabot.yml`); bump them by hand. `pnpm build`
   skips the site; `pnpm typecheck`, `check`, `knip`, `test` include it.
 - Public API changes: update the package's `index.ts`, its tests, its `AGENTS.md`, write a doc-comment on every
   new top-level export (the reference is generated from them; `REFERENCE_STRICT=1 pnpm --filter @meshcorejs/docs

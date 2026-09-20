@@ -16,6 +16,7 @@ export const metadata: Metadata = {
   category: 'technology',
   alternates: { canonical: './' },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-image-preview': 'large' } },
+  verification: { google: '8ibFHS_TEBQd14gKxVHFr0coysVfMGcwOr9iMPTyPpE' },
   openGraph: {
     type: 'website',
     siteName: appName,

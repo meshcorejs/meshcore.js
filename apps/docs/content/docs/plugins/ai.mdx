@@ -1,0 +1,66 @@
+---
+title: ai
+description: /ask <question> answered by an OpenAI-compatible model, with memory and cooldown.
+---
+
+Someone sends `/ask where is Toulouse` to the bot. The bot asks the model and answers in one or two
+sentences.
+
+## Install
+
+```package-install
+@meshcorejs/plugin-ai
+```
+
+## Configure
+
+<include lang="ts" meta='title="plugins/ai.ts"'>../../../snippets/plugins/ai.ts#minimal</include>
+
+Another provider and French replies:
+
+<include lang="ts" meta='title="plugins/ai.ts"'>../../../snippets/plugins/ai.ts#provider</include>
+
+## On the air
+
+`/ask <question>` in a DM, `@Bot ask <question>` on a channel. Everyone can ask, once every 30 seconds.
+The model remembers the last six exchanges of each author for ten minutes, so a follow-up question works.
+
+A long answer is split in two radio messages at most. When the model fails, the bot says
+`⚠️ The assistant is unavailable, try again later` and nothing else.
+
+`/ask` with no text at all is refused by the framework's own missing-argument reply, before the plugin
+runs. The plugin's `empty` reply only answers a quoted empty question, such as `/ask ""`.
+
+## Options
+
+| Option         | Default   | Role                                                          |
+| -------------- | --------- | -------------------------------------------------------------- |
+| `apiKey`       | required  | The provider's API key. Read it from your own environment.     |
+| `model`        | `gpt-5-mini` | Model name.                                                  |
+| `baseURL`      | OpenAI    | Base URL of an OpenAI-compatible provider.                     |
+| `systemPrompt` | see below | Replaces the instruction. The bot's name is always appended.   |
+| `cooldown`     | `30`      | Seconds between two `/ask` by the same author.                 |
+| `permission`   | none      | Permission required to ask. Without it everyone can.           |
+| `history`      | `6`       | Exchanges remembered per author. `0` disables memory.          |
+| `historyTtl`   | `600`     | Seconds before an author's memory is forgotten.                |
+| `maxParts`     | `2`       | Radio messages an answer may take, 1 to 3.                     |
+| `replies`      | English   | `frenchReplies`, or a partial override.                        |
+| `openai`       |           | Replaces the SDK client. For tests.                            |
+
+Default instruction: `You answer over a LoRa radio. Reply in one or two short sentences, plain text, no
+markdown, no lists.`
+
+Without `baseURL`, the `openai` SDK still reads its own environment fallbacks, while the plugin itself
+never reads `process.env`.
+
+## Replies
+
+| Key           | English                                              |
+| ------------- | ----------------------------------------------------- |
+| `unavailable` | `⚠️ The assistant is unavailable, try again later`     |
+| `empty`       | `❓ Ask me something: /ask <question>`                 |
+
+## Reference
+
+- [Source on GitHub](https://github.com/meshcorejs/meshcore.js/tree/main/plugins/ai)
+- [npm](https://www.npmjs.com/package/@meshcorejs/plugin-ai)

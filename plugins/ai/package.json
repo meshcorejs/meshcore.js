@@ -1,0 +1,61 @@
+{
+  "name": "@meshcorejs/plugin-ai",
+  "version": "0.1.0",
+  "description": "Ask an AI assistant from a MeshCore: /ask <question>, answered by an OpenAI-compatible model.",
+  "keywords": [
+    "meshcore",
+    "lora",
+    "mesh",
+    "bot",
+    "plugin",
+    "openai",
+    "ai"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Théo Lagache",
+    "url": "https://github.com/asuniia"
+  },
+  "homepage": "https://github.com/meshcorejs/meshcore.js/tree/main/plugins/ai#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meshcorejs/meshcore.js.git",
+    "directory": "plugins/ai"
+  },
+  "bugs": {
+    "url": "https://github.com/meshcorejs/meshcore.js/issues"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "peerDependencies": {
+    "@meshcorejs/client": ">=0.1.0"
+  },
+  "devDependencies": {
+    "@meshcorejs/client": "workspace:*",
+    "@meshcorejs/testing": "workspace:*"
+  },
+  "dependencies": {
+    "openai": "^7.19.0"
+  }
+}

@@ -62,6 +62,8 @@ jobs:
           node-version: 20
       - run: node --input-type=module -e "import('@meshcorejs/client').then((m) => { if (typeof m.Client !== 'function') process.exit(1); console.log('@meshcorejs/client loads on', process.version); })"
         working-directory: examples/weather-bot
+      - run: node --input-type=module -e "import('@meshcorejs/plugin-ai').then((m) => { if (typeof m.default?.configure !== 'function') process.exit(1); console.log('@meshcorejs/plugin-ai loads on', process.version); })"
+        working-directory: plugins/ai
 
   lint-workflows:
     name: Workflows and spelling

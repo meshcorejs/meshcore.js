@@ -16,6 +16,9 @@
       "entry": ["src/{permissions,roles,commands,events,jobs,plugins}/**/*.ts"],
       "project": ["src/**/*.ts"]
     },
+    "plugins/*": {
+      "project": ["src/**/*.ts", "test/**/*.ts"]
+    },
     "packages/client": {
       "entry": ["test/fixtures/**/*.ts"],
       "project": ["src/**/*.ts", "test/**/*.ts"]

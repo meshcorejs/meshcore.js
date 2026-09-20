@@ -72,6 +72,9 @@ importers:
       '@meshcorejs/client':
         specifier: workspace:*
         version: link:../../packages/client
+      '@meshcorejs/plugin-ai':
+        specifier: workspace:*
+        version: link:../../plugins/ai
       '@meshcorejs/protocol':
         specifier: workspace:*
         version: link:../../packages/protocol
@@ -166,6 +169,19 @@ importers:
       '@meshcorejs/protocol':
         specifier: workspace:*
         version: link:../protocol
+
+  plugins/ai:
+    dependencies:
+      openai:
+        specifier: ^7.19.0
+        version: 7.19.0(zod@4.6.5)
+    devDependencies:
+      '@meshcorejs/client':
+        specifier: workspace:*
+        version: link:../../packages/client
+      '@meshcorejs/testing':
+        specifier: workspace:*
+        version: link:../../packages/testing
 
 packages:
 
@@ -2661,6 +2677,30 @@ packages:
 
   oniguruma-to-es@4.3.6:
     resolution: {integrity: sha512-csuQ9x3Yr0cEIs/Zgx/OEt9iBw9vqIunAPQkx19R/fiMq2oGVTgcMqO/V3Ybqefr1TBvosI6jU539ksaBULJyA==}
+
+  openai@7.19.0:
+    resolution: {integrity: sha512-MX2s3u2L5racTO0CC/SWpCOasJQBCJrqLKXK+l82cAhdeF8mPMBEe/gxMm0ZFa2xpKpOFLRjxv5afYEZbBXmbQ==}
+    engines: {node: '>=22.0.0'}
+    peerDependencies:
+      '@aws-sdk/credential-provider-node': '>=3.972.0 <4'
+      '@smithy/hash-node': '>=4.3.0 <5'
+      '@smithy/signature-v4': '>=5.4.0 <6'
+      undici: '>=5 <9'
+      ws: ^8.21.0
+      zod: ^3.25 || ^4.0
+    peerDependenciesMeta:
+      '@aws-sdk/credential-provider-node':
+        optional: true
+      '@smithy/hash-node':
+        optional: true
+      '@smithy/signature-v4':
+        optional: true
+      undici:
+        optional: true
+      ws:
+        optional: true
+      zod:
+        optional: true
 
   oxc-parser@0.150.0:
     resolution: {integrity: sha512-zwajKw1GUa57IOdafIS7/yOObGF2NihwIfZfs5yJTRprMSkiwhWOc/k+n8bwnUPbHr2/XsjfBO8KyTPaW3VpWg==}
@@ -5595,6 +5635,10 @@ snapshots:
       oniguruma-parser: 0.12.2
       regex: 6.1.0
       regex-recursion: 6.0.2
+
+  openai@7.19.0(zod@4.6.5):
+    optionalDependencies:
+      zod: 4.6.5
 
   oxc-parser@0.150.0:
     dependencies:

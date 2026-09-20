@@ -32,6 +32,7 @@ Works with npm and yarn too. Node.js 20 or newer.
 | [`@meshcorejs/protocol`](packages/protocol)     | Companion Radio protocol codec, no I/O                              |
 | [`@meshcorejs/transports`](packages/transports) | TCP, serial and BLE transports, plus a fake radio (`/mock`)         |
 | [`@meshcorejs/testing`](packages/testing)       | Test bots without a radio: `createTestClient()` with simulated time |
+| [`@meshcorejs/plugin-ai`](plugins/ai)           | Official plugin: `/ask <question>` answered by an AI model          |
 
 Example: [`examples/weather-bot`](examples/weather-bot) (weather plugin, owner role, `RadioConfig`, morning
 bulletin, tests).
@@ -57,11 +58,15 @@ const client = new Client({
 Group bricks that live together, ship them as a package, configure them at the client:
 
 ```ts
-import meteo from 'meshcore-plugin-meteo';
+import ai from '@meshcorejs/plugin-ai';
 
-client.register(meteo.configure({ city: 'Toulouse' }));
-await client.plugins.get('meteo')?.reload();
+client.register(ai.configure({ apiKey: process.env.OPENAI_API_KEY ?? '' }));
+await client.login();
+await client.plugins.get('ai')?.reload();
 ```
+
+Official plugins are published under `@meshcorejs/plugin-*`; your own can live anywhere, even in the bot's
+own `plugins/` folder.
 
 ## Replies and built-in commands
 

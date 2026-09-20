@@ -1,0 +1,25 @@
+---
+title: Overview
+description: The plugins published by the meshcore.js team, and how to add one to a bot.
+---
+
+An official plugin is an npm package under `@meshcorejs/plugin-*`. Add one to a bot with a single file.
+
+```ts title="plugins/ai.ts"
+import ai from '@meshcorejs/plugin-ai';
+
+export default ai.configure({ apiKey: process.env.OPENAI_API_KEY ?? '' });
+```
+
+The file sits under `plugins/` and is loaded at login with the other bricks. Reload it from the radio with
+`/plugins reload <name>`.
+
+Every official plugin follows the same rules. Secrets come from its options, read from your own
+environment. Nothing is stored on disk. Every text it says on its own is English by default, French with
+its `frenchReplies`, or yours.
+
+<Cards>
+  <Card title="ai" description="/ask <question>, answered by an OpenAI-compatible model." href="/docs/plugins/ai" />
+</Cards>
+
+To publish your own, see [Shipping a package](/docs/client/plugins/shipping-a-package).

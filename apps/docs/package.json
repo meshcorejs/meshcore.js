@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@meshcorejs/client": "workspace:*",
+    "@meshcorejs/plugin-ai": "workspace:*",
     "@meshcorejs/protocol": "workspace:*",
     "@meshcorejs/testing": "workspace:*",
     "@meshcorejs/transports": "workspace:*",

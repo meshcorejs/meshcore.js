@@ -1,0 +1,6 @@
+{
+  "title": "Official plugins",
+  "description": "Plugins published by the meshcore.js team",
+  "root": true,
+  "pages": ["index", "ai"]
+}

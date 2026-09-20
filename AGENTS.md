@@ -17,10 +17,11 @@ you change that package's public API, layout or invariants.
 | `packages/transports`  | `@meshcorejs/transports` | `Transport` interface, TCP / serial / BLE, `/mock` subpath (`MockTransport`, `FakeRadio`)                   | `protocol`; optional peers `serialport`, `@abandonware/noble` |
 | `packages/client`      | `@meshcorejs/client`     | The framework: `Client`, managers, builders, plugins, permissions, jobs. The only package users install.    | `protocol`, `transports`, `croner`                            |
 | `packages/testing`     | `@meshcorejs/testing`    | `createTestClient()`: a bot on a `FakeRadio` with simulated time                                            | `transports`, `@sinonjs/fake-timers`; peer `meshcore.js`      |
+| `plugins/ai`           | `@meshcorejs/plugin-ai`  | Official plugin: `/ask <question>` answered by an OpenAI-compatible model (see its `AGENTS.md`)             | peer `client`; `openai`                                       |
 | `examples/weather-bot` | private                  | The example bot: weather plugin + shared service, owner role, RadioConfig, cron job, tests (see its `AGENTS.md`) | `meshcore.js`, `serialport`                                   |
 | `apps/docs`            | `@meshcorejs/docs`       | The documentation site (Fumadocs on Next.js): guides + TypeDoc reference, one tab per package (see its `AGENTS.md`) | `next`, `fumadocs-*`, `typedoc`; TypeScript 6 pinned locally |
 
-Build order (topological): protocol → transports → client → testing → examples; apps/docs is built separately
+Build order (topological): protocol → transports → client → testing → plugins → examples; apps/docs is built separately
 (`pnpm --filter @meshcorejs/docs build`).
 
 ## Commands
@@ -85,6 +86,9 @@ Toolchain
 - Public API changes: update the package's `index.ts`, its tests, its `AGENTS.md`, write a doc-comment on every
   new top-level export (the reference is generated from them; `REFERENCE_STRICT=1 pnpm --filter @meshcorejs/docs
   reference` lists the missing ones), and run `pnpm check:types`.
+- `plugins/*` are the official plugins: one package each, `@meshcorejs/client` as a **peer dependency** (and
+  `workspace:*` in `devDependencies`), versioned on their own (not in the Changesets `fixed` group). They only
+  use the public client API: a plugin never needs a change in `@meshcorejs/client`.
 
 Domain invariants (details in each package's `AGENTS.md`)
 

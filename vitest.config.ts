@@ -10,10 +10,15 @@ export default defineConfig({
     env: { TZ: 'UTC' },
     coverage: {
       provider: 'v8',
-      include: ['packages/*/src/**/*.ts'],
+      include: ['packages/*/src/**/*.ts', 'plugins/*/src/**/*.ts'],
       reporter: ['text-summary', 'html'],
       reportsDirectory: 'coverage',
     },
-    include: ['packages/*/test/**/*.test.ts', 'examples/*/test/**/*.test.ts', 'apps/*/test/**/*.test.ts'],
+    include: [
+      'packages/*/test/**/*.test.ts',
+      'plugins/*/test/**/*.test.ts',
+      'examples/*/test/**/*.test.ts',
+      'apps/*/test/**/*.test.ts',
+    ],
   },
 });

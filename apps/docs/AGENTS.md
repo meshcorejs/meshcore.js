@@ -106,7 +106,13 @@ None (website). Scripts: `pnpm --filter @meshcorejs/docs dev | build | start | r
   browser on the index written at `/api/search` (`RootProvider search={{ options: { type: 'static' } }}`,
   `staticGET`); `/docs` is a page with a `<meta http-equiv="refresh">` to `/docs/client` because a static site
   cannot redirect; `.md` content negotiation is gone, `MarkdownCopyButton` points at the static
-  `/llms.mdx/docs/…/content.md`. `NEXT_PUBLIC_URL` (set in `docs.yml`) is `metadataBase` and the sitemap base.
+  `/llms.mdx/docs/…/content.md`. `NEXT_PUBLIC_URL` (set in `docs.yml`) is `metadataBase` and the sitemap base;
+  it includes the `basePath`, so URLs are built by concatenation (`${siteUrl}${page.url}`), never with `new URL()`,
+  which would drop it.
+- SEO: all site-wide metadata (description, keywords, robots, canonical `./`, Open Graph, Twitter card) lives in
+  `app/layout.tsx`; docs pages override title, description and image in `generateMetadata`. Share images are
+  explicit `.png` routes (`og/image.png` for the landing, `og/docs/[...slug]` for pages) rather than the
+  `opengraph-image.tsx` convention, whose export has no extension and no content type on GitHub Pages.
 - Local preview of the export: `pnpm --filter @meshcorejs/docs serve` (Python `http.server` on `out/`; it does
   not resolve extensionless URLs the way GitHub Pages does, open `/docs/client.html` directly).
 - The export weighs about 220 MB (343 pages, each shipping the full sidebar tree in its RSC payload). Under

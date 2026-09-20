@@ -5,5 +5,5 @@ import { source } from '@/lib/source';
 export const dynamic = 'force-static';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [{ url: siteUrl }, ...source.getPages().map((page) => ({ url: new URL(page.url, siteUrl).toString() }))];
+  return [{ url: siteUrl }, ...source.getPages().map((page) => ({ url: `${siteUrl}${page.url}` }))];
 }

@@ -1,0 +1,40 @@
+---
+title: Model and built-in permissions
+description: Permissions come from roles. The core permissions and what they unlock.
+---
+
+Permissions come only from roles. A `Role` has a priority, a list of permissions and a member source. The
+library never stores membership. You own it, in a `.env` list, a database or a config file, and hand it to
+`setMembers()`.
+
+## Built-in permissions
+
+`Permissions.*` are ready-made permissions named `core.*`. The `core.` prefix is reserved for them.
+
+| Permission                    | Unlocks                                           |
+| ----------------------------- | ------------------------------------------------- |
+| `Permissions.Administrator`   | Every permission                                  |
+| `Permissions.ManageRoles`     | Give and remove roles, limited by the hierarchy   |
+| `Permissions.ManageContacts`  | Add, remove and edit radio contacts               |
+| `Permissions.ManageChannels`  | Create and delete radio channels                  |
+| `Permissions.ManageJobs`      | Run, pause and resume jobs                        |
+| `Permissions.ManagePlugins`   | Load, unload and reload plugins                   |
+| `Permissions.ViewPermissions` | See who has which role                            |
+
+One role granting `Permissions.Administrator` is enough to unlock the built-in `/plugins` and `/jobs`
+commands and any command you protect with it.
+
+<include lang="ts" meta='title="roles/owner.ts"'>../../../../snippets/client/permissions.ts#owner</include>
+
+## Your own permissions
+
+For anything beyond the built-ins, declare a `PermissionBuilder`, grant it to a role, and require it on a
+command.
+
+<include lang="ts" meta='title="main.ts"'>../../../../snippets/client/permissions.ts#custom</include>
+
+## Reference
+
+- [PermissionBuilder](../reference/classes/PermissionBuilder)
+- [Permissions](../reference/variables/Permissions)
+- [PermissionManager](../reference/classes/PermissionManager)

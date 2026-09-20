@@ -1,5 +1,6 @@
 import { NAME_FIELD_SIZE, type SelfInfo, type SetRadioParamsCommand, utf8ByteLength } from '@meshcorejs/protocol';
 
+/** LoRa radio parameters in app units: `frequency` in MHz, `bandwidth` in kHz. */
 export interface RadioParams {
   frequency: number;
   bandwidth: number;
@@ -7,6 +8,7 @@ export interface RadioParams {
   codingRate: number;
 }
 
+/** A position in decimal degrees. */
 export interface Location {
   lat: number;
   lon: number;

@@ -1,0 +1,6 @@
+{
+  "title": "@meshcorejs/testing",
+  "description": "Test a bot without a radio",
+  "root": true,
+  "pages": ["index", "---Reference---", "reference"]
+}

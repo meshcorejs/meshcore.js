@@ -2,10 +2,12 @@ import type { Client } from '../client/client.js';
 import type { Contact } from '../structures/contact.js';
 import { type Member, normalizeMembers, type RoleDefinition } from './role-builder.js';
 
+/** A role member joined with the `Contact` the radio knows for its key, if any. */
 export interface ResolvedMember extends Member {
   contact: Contact | null;
 }
 
+/** A registered role: its permissions, its members (resolved from the list or the source, cached), and `invalidate()` to force a re-read. */
 export class Role {
   readonly client: Client;
   readonly name: string;

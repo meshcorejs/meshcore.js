@@ -2,7 +2,18 @@
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
   "files": {
-    "includes": ["**", "!**/dist", "!**/coverage", "!pnpm-lock.yaml", "!docs"]
+    "includes": [
+      "**",
+      "!**/dist",
+      "!**/coverage",
+      "!pnpm-lock.yaml",
+      "!docs",
+      "!apps/docs/.next",
+      "!apps/docs/.source",
+      "!apps/docs/next-env.d.ts",
+      "!apps/docs/content/docs/*/reference",
+      "!apps/docs/**/*.css"
+    ]
   },
   "formatter": {
     "enabled": true,
@@ -33,6 +44,10 @@
     {
       "includes": ["**/test/**"],
       "linter": { "rules": { "style": { "noNonNullAssertion": "off" } } }
+    },
+    {
+      "includes": ["apps/docs/**"],
+      "linter": { "domains": { "next": "recommended", "react": "recommended" } }
     }
   ]
 }

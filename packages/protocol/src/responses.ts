@@ -19,37 +19,45 @@ import type {
   SelfInfo,
 } from './types.js';
 
+/** Encode an `Ok` response (what a fake radio answers to most commands). */
 export function encodeOkResponse(): Uint8Array {
   return Uint8Array.of(ResponseCode.Ok);
 }
 
+/** Encode an `Err` response with a `RadioErrorCode`. */
 export function encodeErrResponse(errorCode: number): Uint8Array {
   assertU8('errorCode', errorCode);
   return Uint8Array.of(ResponseCode.Err, errorCode);
 }
 
+/** Encode `ContactsStart`, opening a contact listing with the number of contacts to follow. */
 export function encodeContactsStartResponse(total: number): Uint8Array {
   assertU32('total', total);
   return new ByteWriter().u8(ResponseCode.ContactsStart).u32(total).toBytes();
 }
 
+/** Encode one `Contact` of a listing. */
 export function encodeContactResponse(contact: ContactRecord): Uint8Array {
   return writeContactRecord(new ByteWriter().u8(ResponseCode.Contact), contact).toBytes();
 }
 
+/** Encode `EndOfContacts`, closing a listing with the newest `lastModified`. */
 export function encodeEndOfContactsResponse(mostRecentLastModified: number): Uint8Array {
   assertU32('mostRecentLastModified', mostRecentLastModified);
   return new ByteWriter().u8(ResponseCode.EndOfContacts).u32(mostRecentLastModified).toBytes();
 }
 
+/** Encode `ExportContact` with an advert packet. */
 export function encodeExportContactResponse(packet: Uint8Array): Uint8Array {
   return new ByteWriter().u8(ResponseCode.ExportContact).bytes(packet).toBytes();
 }
 
+/** Encode `SelfInfo`, the answer to `APP_START`. */
 export function encodeSelfInfoResponse(info: SelfInfo): Uint8Array {
   return writeSelfInfo(new ByteWriter().u8(ResponseCode.SelfInfo), info).toBytes();
 }
 
+/** Encode `Sent`, the answer to a text message: flood or direct, expected ack and suggested timeout. */
 export function encodeSentResponse(params: {
   flood: boolean;
   expectedAck: number;
@@ -65,8 +73,13 @@ export function encodeSentResponse(params: {
     .toBytes();
 }
 
+/**
+ * Parameters accepted by {@link encodeContactMessageResponse}: a {@link ContactMessageFrame} without its
+ * derived fields.
+ */
 export type ContactMessageParams = Omit<ContactMessageFrame, 'kind' | 'type' | 'hopCount'>;
 
+/** Encode a received direct message (`ContactMsgRecv`, version 2 or 3). */
 export function encodeContactMessageResponse(message: ContactMessageParams): Uint8Array {
   const writer = new ByteWriter();
   if (message.version === 3) {
@@ -93,8 +106,13 @@ export function encodeContactMessageResponse(message: ContactMessageParams): Uin
   return writer.string(message.text).toBytes();
 }
 
+/**
+ * Parameters accepted by {@link encodeChannelMessageResponse}: a {@link ChannelMessageFrame} without its
+ * derived fields.
+ */
 export type ChannelMessageParams = Omit<ChannelMessageFrame, 'kind' | 'type' | 'hopCount'>;
 
+/** Encode a received channel message (`ChannelMsgRecv`, version 2 or 3). */
 export function encodeChannelMessageResponse(message: ChannelMessageParams): Uint8Array {
   const writer = new ByteWriter();
   if (message.version === 3) {
@@ -118,15 +136,18 @@ export function encodeChannelMessageResponse(message: ChannelMessageParams): Uin
     .toBytes();
 }
 
+/** Encode `CurrTime` with the radio's clock. */
 export function encodeCurrentTimeResponse(epochSeconds: number): Uint8Array {
   assertU32('epochSeconds', epochSeconds);
   return new ByteWriter().u8(ResponseCode.CurrTime).u32(epochSeconds).toBytes();
 }
 
+/** Encode `NoMoreMessages`, the answer to `SYNC_NEXT_MESSAGE` when the queue is empty. */
 export function encodeNoMoreMessagesResponse(): Uint8Array {
   return Uint8Array.of(ResponseCode.NoMoreMessages);
 }
 
+/** Encode `BattAndStorage`: battery millivolts and storage usage. */
 export function encodeBattAndStorageResponse(params: {
   batteryMillivolts: number;
   storageUsedKb: number | null;
@@ -140,40 +161,49 @@ export function encodeBattAndStorageResponse(params: {
   return writer.toBytes();
 }
 
+/** Encode `DeviceInfo`, the answer to `DEVICE_QUERY`. */
 export function encodeDeviceInfoResponse(info: DeviceInfo): Uint8Array {
   return writeDeviceInfo(new ByteWriter().u8(ResponseCode.DeviceInfo), info).toBytes();
 }
 
+/** Encode `ChannelInfo`, the answer to `GET_CHANNEL`. */
 export function encodeChannelInfoResponse(channel: ChannelRecord): Uint8Array {
   return writeChannelRecord(new ByteWriter().u8(ResponseCode.ChannelInfo), channel).toBytes();
 }
 
+/** Encode the `Advert` push: a known contact advertised again. */
 export function encodeAdvertPush(publicKey: string): Uint8Array {
   return new ByteWriter().u8(PushCode.Advert).bytes(publicKeyToBytes(publicKey)).toBytes();
 }
 
+/** Encode the `PathUpdated` push: the route to a contact changed. */
 export function encodePathUpdatedPush(publicKey: string): Uint8Array {
   return new ByteWriter().u8(PushCode.PathUpdated).bytes(publicKeyToBytes(publicKey)).toBytes();
 }
 
+/** Encode the `SendConfirmed` push: a direct message was acknowledged. */
 export function encodeSendConfirmedPush(params: { ack: number; roundTripMs: number }): Uint8Array {
   assertU32('ack', params.ack);
   assertU32('roundTripMs', params.roundTripMs);
   return new ByteWriter().u8(PushCode.SendConfirmed).u32(params.ack).u32(params.roundTripMs).toBytes();
 }
 
+/** Encode the `MsgWaiting` push: a message is ready for `SYNC_NEXT_MESSAGE`. */
 export function encodeMsgWaitingPush(): Uint8Array {
   return Uint8Array.of(PushCode.MsgWaiting);
 }
 
+/** Encode the `NewAdvert` push: an unknown node advertised (manual-add mode). */
 export function encodeNewAdvertPush(contact: ContactRecord): Uint8Array {
   return writeContactRecord(new ByteWriter().u8(PushCode.NewAdvert), contact).toBytes();
 }
 
+/** Encode the `ContactDeleted` push. */
 export function encodeContactDeletedPush(publicKey: string): Uint8Array {
   return new ByteWriter().u8(PushCode.ContactDeleted).bytes(publicKeyToBytes(publicKey)).toBytes();
 }
 
+/** Encode the `ContactsFull` push: the contact table cannot take another entry. */
 export function encodeContactsFullPush(): Uint8Array {
   return Uint8Array.of(PushCode.ContactsFull);
 }

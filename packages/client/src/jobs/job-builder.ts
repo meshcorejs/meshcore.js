@@ -5,8 +5,10 @@ import { LoadError } from '../errors.js';
 
 export const JOB_NAME_PATTERN = /^[a-z0-9_-]{1,32}$/;
 
+/** What happens when a job fires while its previous run is still going: `skip` drops the tick, `queue` runs it right after. */
 export type OverlapPolicy = 'skip' | 'queue';
 
+/** What a job handler receives about the current run: the job name, an abort signal (timeout or shutdown), and the last and next run dates. */
 export interface JobRunInfo {
   readonly name: string;
   readonly signal: AbortSignal;
@@ -14,10 +16,12 @@ export interface JobRunInfo {
   readonly nextRun: Date | null;
 }
 
+/** When a job runs: a cron expression (with optional IANA timezone) or a fixed interval in seconds. */
 export type JobSchedule =
   | { type: 'cron'; expression: string; timezone: string | undefined }
   | { type: 'interval'; seconds: number };
 
+/** What a `JobBuilder` builds: name, schedule, run-on-start, overlap policy, timeout, connection requirement and handler. */
 export interface JobDefinition {
   name: string;
   schedule: JobSchedule;

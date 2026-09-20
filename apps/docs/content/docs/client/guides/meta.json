@@ -1,0 +1,15 @@
+{
+  "title": "Guides",
+  "defaultOpen": true,
+  "pages": [
+    "answer-a-command",
+    "read-the-arguments",
+    "post-on-a-channel",
+    "run-on-a-schedule",
+    "react-to-the-mesh",
+    "restrict-a-command",
+    "translate-the-replies",
+    "write-a-plugin",
+    "test-without-a-radio"
+  ]
+}

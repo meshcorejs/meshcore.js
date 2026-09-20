@@ -38,6 +38,7 @@ import {
 } from '@meshcorejs/protocol';
 import type { MockTransport } from './mock-transport.js';
 
+/** Initial state of a `FakeRadio`: self info, device info, contacts, channels, clock, the ack timeout it suggests and its own advert packet. */
 export interface FakeRadioOptions {
   self?: Partial<SelfInfo>;
   device?: Partial<DeviceInfo>;
@@ -48,8 +49,10 @@ export interface FakeRadioOptions {
   selfAdvertPacket?: Uint8Array;
 }
 
+/** How {@link FakeRadio} acknowledges direct messages: `auto` right away, `manual` on `ack()`, `never`. */
 export type AckMode = 'auto' | 'manual' | 'never';
 
+/** A direct message {@link FakeRadio} recorded as sent by the app. */
 export interface FakeSentDirectMessage {
   kind: 'dm';
   recipientPrefix: string;
@@ -61,6 +64,7 @@ export interface FakeSentDirectMessage {
   expectedAck: number;
 }
 
+/** A channel message {@link FakeRadio} recorded as sent by the app. */
 export interface FakeSentChannelMessage {
   kind: 'channel';
   channelIndex: number;
@@ -70,6 +74,7 @@ export interface FakeSentChannelMessage {
   timestamp: number;
 }
 
+/** One message {@link FakeRadio} recorded as sent by the app, direct or on a channel. */
 export type FakeSentMessage = FakeSentDirectMessage | FakeSentChannelMessage;
 
 const DEFAULT_PUBLIC_KEY = 'b0'.repeat(PUB_KEY_SIZE);
@@ -80,6 +85,10 @@ function truncateUtf8(text: string, maxBytes: number): string {
   return new TextDecoder().decode(bytes.subarray(0, maxBytes)).replace(/�$/, '');
 }
 
+/**
+ * Emulates the Companion firmware (`FIRMWARE_VER_CODE` 13) for the v1 command subset, attached to a
+ * {@link MockTransport}. Used by `@meshcorejs/testing` and every test that needs a radio without hardware.
+ */
 export class FakeRadio {
   readonly self: SelfInfo;
   readonly device: DeviceInfo;
@@ -459,7 +468,10 @@ export class FakeRadio {
   }
 }
 
-/** @param overrides name is required, the key is derived from it */
+/**
+ * A `ContactRecord` for tests: the public key is derived from the name, every other field has a plausible default.
+ * @param overrides name is required, the key is derived from it
+ */
 export function fakeContactRecord(overrides: Partial<ContactRecord> & { name: string }): ContactRecord {
   let state = 0x811c9dc5;
   for (const char of overrides.name) state = Math.imul(state ^ char.charCodeAt(0), 0x01000193) >>> 0;

@@ -3,8 +3,10 @@ import type { Client } from '../client/client.js';
 import type { ClientEvents } from '../client/events.js';
 import { LoadError } from '../errors.js';
 
+/** The name of a `Client` event an `EventBuilder` can listen to. */
 export type EventName = keyof ClientEvents & string;
 
+/** What an `EventBuilder` builds: the event, whether it fires once, and the handler. */
 export interface EventDefinition {
   event: EventName;
   once: boolean;

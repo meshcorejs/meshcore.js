@@ -1,19 +1,28 @@
 const utf8Decoder = new TextDecoder('utf-8');
 const utf8Encoder = new TextEncoder();
 
-/** @param text Text to measure */
+/**
+ * The number of bytes `text` takes in UTF-8, what the 160-byte limit counts.
+ * @param text Text to measure
+ */
 export function utf8ByteLength(text: string): number {
   return utf8Encoder.encode(text).length;
 }
 
-/** @param bytes Bytes to print */
+/**
+ * Lowercase hex string of `bytes`.
+ * @param bytes Bytes to print
+ */
 export function toHex(bytes: Uint8Array): string {
   let out = '';
   for (const byte of bytes) out += byte.toString(16).padStart(2, '0');
   return out;
 }
 
-/** @param hex Hex string, spaces allowed */
+/**
+ * Bytes of a hex string (case-insensitive); throws on an odd length or a non-hex character.
+ * @param hex Hex string, spaces allowed
+ */
 export function fromHex(hex: string): Uint8Array {
   const clean = hex.replace(/\s+/g, '').toLowerCase();
   if (clean.length % 2 !== 0 || !/^[0-9a-f]*$/.test(clean)) {
@@ -24,6 +33,7 @@ export function fromHex(hex: string): Uint8Array {
   return out;
 }
 
+/** Sequential little-endian reader over a `Uint8Array`, used by the frame decoders; throws when reading past the end. */
 export class ByteReader {
   readonly #bytes: Uint8Array;
   readonly #view: DataView;
@@ -87,6 +97,7 @@ export class ByteReader {
   }
 }
 
+/** Growable little-endian writer producing a `Uint8Array`, used by the command and response encoders. */
 export class ByteWriter {
   readonly #bytes: number[] = [];
 

@@ -1,0 +1,44 @@
+---
+title: Declaring a command
+description: The trigger rule, the builder chain, aliases, scope and the reserved names.
+---
+
+## The trigger rule
+
+<Callout type="info">
+In a DM the trigger is `/name`, with no space after the slash. `@Bot name` is tolerated there too. On a
+channel the trigger is `@Bot name`, with the name the radio advertises, case-insensitive, never `/`. This
+rule is fixed. Every meshcore.js bot behaves the same and there is no option to change it.
+</Callout>
+
+Anything else in a message is not a command and only produces `messageCreate`.
+
+## The builder
+
+Chain `setName`, `setDescription`, the optional `addAliases`, the arguments, then `setHandler`.
+`build()` runs when the client validates its bricks and throws a `LoadError` listing every problem at
+once. An invalid name, a duplicate alias or a missing handler are all reported together.
+
+<include lang="ts" meta='title="commands/heard.ts"'>../../../../snippets/client/commands.ts#basic</include>
+
+The file sits under `commands/` and exports the builder. See [Bricks and loading](../client/bricks-and-loading).
+
+## Where and how often
+
+| Method                       | Effect                                                                                    |
+| ---------------------------- | ----------------------------------------------------------------------------------------- |
+| `setScope('dm', 'channel')`  | Where the command can be triggered. Both by default.                                      |
+| `setRequiredPermissions()`   | Permissions the author needs, all of them. Always refused on a channel, whatever the scope. |
+| `setCooldown(seconds)`       | Delay between two runs by the same author. `0` by default.                                |
+| `setMaxAge(seconds)`         | Messages queued on the radio while the bot was offline and older than this are ignored. 300 by default. |
+
+## Reserved names
+
+`help`, `plugins` and `jobs` belong to the [built-in commands](./built-in-commands). Declaring a command
+or an alias with one of these names fails `build()`.
+
+## Reference
+
+- [CommandBuilder](../reference/classes/CommandBuilder)
+- [Command](../reference/classes/Command)
+- [CommandScope](../reference/type-aliases/CommandScope)

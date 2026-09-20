@@ -1,0 +1,34 @@
+---
+title: Overview
+description: What @meshcorejs/client is and where to start.
+---
+
+`@meshcorejs/client` is the bot framework for [MeshCore](https://github.com/meshcore-dev/MeshCore) radios
+running the **Companion Radio** firmware. A `Client` logs into the radio and keeps its contacts and channels
+in cache. Everything the bot does is declared with builders, the way [discord.js](https://discord.js.org)
+bots are. It is the only package a bot installs.
+
+## Requirements
+
+- A MeshCore node running the **Companion Radio** firmware, protocol version 3 or newer.
+- Node.js 20 or newer to run bots.
+- Serial needs `serialport`. BLE needs `@abandonware/noble`. TCP needs nothing.
+
+## Where to start
+
+<Cards>
+  <Card title="Getting started" description="Install the package and run a first bot on a radio plugged over USB." href="/docs/client/getting-started" />
+  <Card title="Guides" description="One task per page, code first. Answer a command, post on a channel, restrict, translate, test." href="/docs/client/guides/answer-a-command" />
+  <Card title="Client" description="Options, login, bricks, radio settings, messages, errors." href="/docs/client/client/options-and-login" />
+  <Card title="Reference" description="Every class, interface and function, generated from the sources." href="/docs/client/reference" />
+</Cards>
+
+## The other packages
+
+<Cards>
+  <Card title="@meshcorejs/protocol" description="Companion Radio protocol codec, no I/O." href="/docs/protocol" />
+  <Card title="@meshcorejs/transports" description="TCP, serial and BLE transports, plus a fake radio." href="/docs/transports" />
+  <Card title="@meshcorejs/testing" description="Test bots without a radio, with simulated time." href="/docs/testing" />
+</Cards>
+
+To contribute, read [`CONTRIBUTING.md`](https://github.com/meshcorejs/meshcore.js/blob/main/CONTRIBUTING.md) on GitHub.

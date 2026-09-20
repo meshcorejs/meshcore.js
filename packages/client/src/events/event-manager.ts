@@ -7,6 +7,7 @@ export interface RegisteredEvent {
   readonly listener: (...args: unknown[]) => void;
 }
 
+/** `client.events`: the event bricks currently registered, with the listeners attached to the client. */
 export class EventManager {
   readonly client: Client;
   readonly #registered = new Set<RegisteredEvent>();

@@ -1,0 +1,45 @@
+{
+  "name": "@meshcorejs/docs",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm reference && next dev",
+    "build": "pnpm reference && next build",
+    "reference": "tsx scripts/generate-reference.ts",
+    "serve": "python3 -m http.server 3000 --directory out",
+    "typecheck": "next typegen && tsc --noEmit"
+  },
+  "author": {
+    "name": "Théo Lagache",
+    "url": "https://github.com/asuniia"
+  },
+  "dependencies": {
+    "@iconify/react": "^6.0.2",
+    "fumadocs-core": "16.15.11",
+    "fumadocs-mdx": "15.4.1",
+    "fumadocs-ui": "npm:@fumadocs/base-ui@16.15.11",
+    "lucide-react": "^1.43.0",
+    "next": "16.3.4",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@meshcorejs/client": "workspace:*",
+    "@meshcorejs/protocol": "workspace:*",
+    "@meshcorejs/testing": "workspace:*",
+    "@meshcorejs/transports": "workspace:*",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/mdx": "^2.0.14",
+    "@types/node": "^22.20.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "postcss": "^8.5.28",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.13",
+    "typedoc": "0.28.20",
+    "typedoc-plugin-markdown": "4.13.1",
+    "typescript": "6.0.3",
+    "vitest": "^5.0.1"
+  }
+}

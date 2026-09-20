@@ -1,0 +1,37 @@
+---
+title: Built-in commands
+description: /help, /plugins and /jobs, and the permissions that unlock them.
+---
+
+Every `Client` registers three commands. They are ordinary commands built with an internal `core` flag, so
+they never collide with yours, and they are listed last in the helper.
+
+## /help
+
+A bare `/` or `/help` in a DM, a bare `@Bot` or `@Bot help` on a channel, list the commands the author
+can use. One usage line per command, filtered by scope and, in a DM, by the author's permissions. A channel
+listing only shows commands that need no permission. A long list is split into up to three parts.
+
+## /plugins
+
+`/plugins` lists every plugin with its state and brick count. `/plugins load|unload|reload <name>` acts
+on one. It needs `Permissions.ManagePlugins` and only works in a DM. A `LoadError` from a reload is
+summarised on the air with its first issue.
+
+## /jobs
+
+`/jobs` lists every job with its state and next run. `/jobs run|pause|resume <name>` acts on one. It
+needs `Permissions.ManageJobs` and only works in a DM.
+
+## Unlocking them
+
+Both commands exist in every bot, but nobody can pass their permission check without a role. A bot without
+roles exposes nothing extra. An owner role with `Permissions.Administrator` unlocks both.
+
+<include lang="ts" meta='title="roles/owner.ts"'>../../../../snippets/client/built-in-commands.ts#owner</include>
+
+## Reference
+
+- [Permissions](../reference/variables/Permissions)
+- [Command](../reference/classes/Command)
+- [CORE_PERMISSION_PREFIX](../reference/variables/CORE_PERMISSION_PREFIX)

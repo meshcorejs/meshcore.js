@@ -48,11 +48,13 @@ import {
 } from './radio-settings.js';
 import { type Collector, RequestQueue } from './request-queue.js';
 
+/** Events a `Radio` emits: `push` for unsolicited firmware pushes, `raw` for every decoded frame. */
 export interface RadioEvents extends Record<string, unknown[]> {
   push: [frame: PushFrame];
   raw: [frame: DecodedFrame];
 }
 
+/** Options for `Radio`: request timeout. Default `timeoutMs` 5000. */
 export interface RadioOptions {
   timeoutMs?: number;
 }
@@ -68,6 +70,10 @@ const ok: Collector<void> = expectType('ok', () => undefined);
 
 const isNotFound = (error: unknown) => error instanceof RadioError && error.radioCode === RadioErrorCode.NotFound;
 
+/**
+ * `client.radio`: typed wrappers around the Companion commands (`appStart`, `deviceQuery`, `getContacts`,
+ * `sendText`, …), one request in flight at a time.
+ */
 export class Radio extends TypedEmitter<RadioEvents> {
   readonly #queue: RequestQueue;
 

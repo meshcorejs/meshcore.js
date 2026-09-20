@@ -1,17 +1,22 @@
 import { MAX_PATH_SIZE, OUT_PATH_UNKNOWN } from './constants.js';
 
+/** A route through the mesh: the hash size used and one hash per hop. */
 export interface Path {
   hashSize: 1 | 2 | 3;
   hops: Uint8Array[];
 }
 
+/** The decoded `pathLen` byte of the wire format: hash size, hop count and total byte length. */
 export interface PathLength {
   hashSize: 1 | 2 | 3;
   hopCount: number;
   byteLength: number;
 }
 
-/** @param pathLen Wire path length byte */
+/**
+ * Split a wire `pathLen` byte into hash size and hop count; `null` when the route is unknown.
+ * @param pathLen Wire path length byte
+ */
 export function decodePathLength(pathLen: number): PathLength | null {
   if (pathLen === OUT_PATH_UNKNOWN) return null;
   const hopCount = pathLen & 0x3f;
@@ -23,6 +28,7 @@ export function decodePathLength(pathLen: number): PathLength | null {
 }
 
 /**
+ * Decode a route from its `pathLen` byte and raw hop bytes; `null` when unknown.
  * @param pathLen Wire path length byte
  * @param raw Path bytes
  */
@@ -36,7 +42,10 @@ export function decodePath(pathLen: number, raw: Uint8Array): Path | null {
   return { hashSize: length.hashSize, hops };
 }
 
-/** @param path Path bytes, or null for flood */
+/**
+ * Encode a route into its `pathLen` byte and hop bytes; `null` encodes as unknown.
+ * @param path Path bytes, or null for flood
+ */
 export function encodePath(path: Path | null): { pathLen: number; bytes: Uint8Array } {
   const bytes = new Uint8Array(MAX_PATH_SIZE);
   if (!path) return { pathLen: OUT_PATH_UNKNOWN, bytes };

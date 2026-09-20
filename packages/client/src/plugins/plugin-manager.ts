@@ -5,6 +5,7 @@ import { ClientStateError, type LoadIssue } from '../errors.js';
 import { Plugin } from './plugin.js';
 import type { PluginDefinition } from './plugin-builder.js';
 
+/** `client.plugins`: the registered plugins by name, loaded by `login()`; `load()`, `unload()` and `reload()` at runtime. */
 export class PluginManager {
   readonly client: Client;
   readonly cache = new Collection<string, Plugin>();

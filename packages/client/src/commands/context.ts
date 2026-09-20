@@ -11,6 +11,7 @@ import type { Contact } from '../structures/contact.js';
 import type { Author, Message } from '../structures/message.js';
 import type { Command } from './command.js';
 
+/** Why a command was refused; every refusal emits `commandDenied` with one of these. */
 export type DenyReason =
   | { type: 'unknownCommand'; name: string }
   | { type: 'scope' }
@@ -20,6 +21,7 @@ export type DenyReason =
   | { type: 'cooldown'; remainingSeconds: number }
   | { type: 'invalidArguments'; error: Error };
 
+/** What `commandDenied` hands the listener: the triggering message and, if it matched a name, the `Command`. */
 export interface DeniedContext {
   readonly client: Client;
   readonly message: Message;
@@ -29,6 +31,7 @@ export interface DeniedContext {
   readonly command: Command | null;
 }
 
+/** Handed to a command's handler: the parsed `args`, the triggering `message`, `reply()`, and permission checks. */
 export class CommandContext<Args extends object = Record<string, unknown>> {
   readonly client: Client;
   readonly command: Command;

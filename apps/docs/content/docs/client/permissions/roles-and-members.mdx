@@ -1,0 +1,32 @@
+---
+title: Roles and members
+description: Member sources, cache and invalidation, and the role hierarchy.
+---
+
+## Members
+
+Members are public keys, full or as a prefix of 12 hexadecimal characters or more, optionally with a label.
+`setMembers()` takes a list, or a function returning one, sync or async, with an optional cache.
+
+After members change in your own source, call `invalidate()` on the registered role so the next check
+picks it up.
+
+<include lang="ts" meta='title="main.ts"'>../../../../snippets/client/permissions.ts#source</include>
+
+## Hierarchy
+
+- `setPriority(n)` is a unique integer. A higher number ranks above.
+- `client.permissions.rank(author)` is the highest priority among the author's roles.
+- `canManageRole(author, role)` holds when the author ranks above the role.
+- `canManageContact(author, target)` holds when the author ranks above the target.
+- `whoHas(permission)` lists every member holding it, directly or through `Administrator`, with their
+  `Contact` when the radio knows them.
+
+There is no exception for `Administrator`. An owner cannot manage a role of equal or higher priority.
+
+## Reference
+
+- [RoleBuilder](../reference/classes/RoleBuilder)
+- [Role](../reference/classes/Role)
+- [RoleManager](../reference/classes/RoleManager)
+- [MemberSource](../reference/type-aliases/MemberSource)

@@ -1,0 +1,25 @@
+---
+title: Post on a channel
+description: Send a message on a channel from a command, within the radio's limits.
+---
+
+`/announce Meeting at the clubhouse, 19:00` in a DM posts the text on the `#club` channel.
+
+<include lang="ts" meta='title="commands/announce.ts"'>../../../../snippets/client/guides/post-on-a-channel.ts#announce</include>
+
+## What happens
+
+`client.channels.get()` finds a channel by name or by slot index in the radio's table. The bot answers
+if the channel is missing instead of failing.
+
+`channel.send()` accepts a string or a `MessageBuilder`. A plain string over the budget throws
+`MessageTooLongError`. The builder with `setOverflow('split')` sends up to three numbered parts instead.
+
+The message goes through the send queue. Transmissions are two seconds apart and the parts of one message
+stay together.
+
+## Go further
+
+- [Sending messages](../client/sending-messages) for the budgets, the builder and delivery status.
+- [Restrict a command](./restrict-a-command) so only owners can announce.
+- [MessageBuilder](../reference/classes/MessageBuilder) in the reference.

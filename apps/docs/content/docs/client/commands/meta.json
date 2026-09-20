@@ -1,0 +1,4 @@
+{
+  "title": "Commands",
+  "pages": ["declaring-a-command", "arguments", "context-and-pipeline", "built-in-commands"]
+}

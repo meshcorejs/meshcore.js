@@ -2,6 +2,7 @@ import type { Client } from '../client/client.js';
 import type { ArgDefinition } from './args.js';
 import { tokenize } from './tokenize.js';
 
+/** Thrown while parsing a command's arguments; `reason` and `arg` say which one and why. */
 export class ArgumentError extends Error {
   readonly arg: ArgDefinition | null;
   readonly reason: 'missing' | 'invalid' | 'ambiguous' | 'tooMany';

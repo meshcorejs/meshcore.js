@@ -1,0 +1,75 @@
+---
+title: Getting started
+description: Install @meshcorejs/client and run a first bot over USB, WiFi or Bluetooth.
+---
+
+## Install
+
+The packages depend on how the radio is connected.
+
+<Tabs items={['USB', 'WiFi', 'Bluetooth']}>
+<Tab value="USB">
+
+```package-install
+@meshcorejs/client serialport
+```
+
+</Tab>
+<Tab value="WiFi">
+
+```package-install
+@meshcorejs/client
+```
+
+</Tab>
+<Tab value="Bluetooth">
+
+```package-install
+@meshcorejs/client @abandonware/noble
+```
+
+</Tab>
+</Tabs>
+
+## A first bot
+
+Two files. `main.ts` connects to the radio, logs in and loads every brick found in the folders next to it.
+`commands/hello.ts` is the first command.
+
+<Tabs items={['USB', 'WiFi', 'Bluetooth']}>
+<Tab value="USB">
+<include lang="ts" meta='title="main.ts"'>../../../snippets/client/transports.ts#serial</include>
+</Tab>
+<Tab value="WiFi">
+<include lang="ts" meta='title="main.ts"'>../../../snippets/client/transports.ts#tcp</include>
+</Tab>
+<Tab value="Bluetooth">
+<include lang="ts" meta='title="main.ts"'>../../../snippets/client/transports.ts#ble</include>
+</Tab>
+</Tabs>
+
+<include lang="ts" meta='title="commands/hello.ts"'>../../../snippets/client/getting-started/commands/hello.ts</include>
+
+Send `/hello` to the bot in a DM. On a channel, send `@ClubBot hello`, with the name the radio advertises.
+
+Every brick is one file with a default export, in a folder named after its kind. `commands/`, `events/`,
+`jobs/`, `permissions/`, `roles/` and `plugins/` are scanned at login.
+
+<Callout type="warn">
+A radio message carries 160 UTF-8 bytes. The library refuses a message that does not fit with
+`MessageTooLongError` instead of truncating it. See [Sending messages](./client/sending-messages).
+</Callout>
+
+## Next
+
+- [Answer a command](./guides/answer-a-command), the first guide.
+- [Bricks and loading](./client/bricks-and-loading) to organise a bot in folders.
+- [Radio settings](./client/radio-settings) to declare the node's name and LoRa parameters.
+
+## Reference
+
+- [Client](./reference/classes/Client)
+- [CommandBuilder](./reference/classes/CommandBuilder)
+- [SerialTransport](./reference/classes/SerialTransport)
+- [TcpTransport](./reference/classes/TcpTransport)
+- [BleTransport](./reference/classes/BleTransport)

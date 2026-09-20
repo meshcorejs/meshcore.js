@@ -4,6 +4,7 @@ import { importOptional } from './optional-import.js';
 import type { Transport, TransportEvents } from './transport.js';
 import { TypedEmitter } from './typed-emitter.js';
 
+/** The part of a `serialport` port `SerialTransport` uses; lets tests inject a fake. */
 export interface SerialPortLike {
   open(callback: (error: Error | null) => void): void;
   write(data: Uint8Array, callback: (error: Error | null | undefined) => void): boolean;
@@ -14,19 +15,23 @@ export interface SerialPortLike {
   removeAllListeners(): unknown;
 }
 
+/** The part of the `serialport` module `SerialTransport` uses. */
 export interface SerialPortModule {
   SerialPort: new (options: { path: string; baudRate: number; autoOpen: boolean }) => SerialPortLike;
 }
 
+/** The serial device (`/dev/ttyACM0`, `COM3`) and its baud rate (default 115200). */
 export interface SerialTransportOptions {
   path: string;
   baudRate?: number;
 }
 
+/** Test hook: how `SerialTransport` loads the module (defaults to the optional dependency `serialport`). */
 export interface SerialTransportDeps {
   loadModule?: () => Promise<SerialPortModule>;
 }
 
+/** Transport over USB serial with the `'<'` / `'>'` framing. Needs `serialport` installed. */
 export class SerialTransport extends TypedEmitter<TransportEvents> implements Transport {
   readonly kind = 'serial';
   readonly path: string;

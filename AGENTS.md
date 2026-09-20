@@ -18,8 +18,10 @@ you change that package's public API, layout or invariants.
 | `packages/client`      | `@meshcorejs/client`     | The framework: `Client`, managers, builders, plugins, permissions, jobs. The only package users install.    | `protocol`, `transports`, `croner`                            |
 | `packages/testing`     | `@meshcorejs/testing`    | `createTestClient()`: a bot on a `FakeRadio` with simulated time                                            | `transports`, `@sinonjs/fake-timers`; peer `meshcore.js`      |
 | `examples/weather-bot` | private                  | The example bot: weather plugin + shared service, owner role, RadioConfig, cron job, tests (see its `AGENTS.md`) | `meshcore.js`, `serialport`                                   |
+| `apps/docs`            | `@meshcorejs/docs`       | The documentation site (Fumadocs on Next.js): guides + TypeDoc reference, one tab per package (see its `AGENTS.md`) | `next`, `fumadocs-*`, `typedoc`; TypeScript 6 pinned locally |
 
-Build order (topological): protocol → transports → client → testing → examples.
+Build order (topological): protocol → transports → client → testing → examples; apps/docs is built separately
+(`pnpm --filter @meshcorejs/docs build`).
 
 ## Commands
 
@@ -38,6 +40,8 @@ pnpm knip                 # unused files, exports and dependencies (knip.json kn
 pnpm test:coverage        # same tests with a v8 coverage report in coverage/ (no threshold)
 pnpm changeset            # describe a change to a published package (see .changeset/README.md)
 pnpm vitest run packages/protocol   # one package's tests
+pnpm --filter @meshcorejs/docs dev        # documentation site on http://localhost:3000 (regenerates the API reference)
+pnpm --filter @meshcorejs/docs build      # TypeDoc + next build; the docs CI runs this
 ```
 
 GitHub: organisation `meshcorejs`, repository `meshcorejs/meshcore.js`, `main` protected (pull requests with a
@@ -48,6 +52,9 @@ weekly, grouped):
   and 24; a job that loads the built `@meshcorejs/client` on Node 20; actionlint and typos (`_typos.toml` allows the
   French radio texts).
 - `codeql.yml` — CodeQL for JavaScript/TypeScript on push, PR and weekly.
+- `docs.yml` — builds the documentation site (`pnpm --filter @meshcorejs/docs build`, a static export in
+  `apps/docs/out/`) on every PR and push; on `main` it uploads `out/` and deploys it to GitHub Pages
+  (`actions/deploy-pages`, environment `github-pages`). No server, no image: the site is static files.
 - `security.yml` — gitleaks (secrets in history) and Plumber (pipeline security score, SARIF to code scanning;
   on pushes to `main` it publishes the public score badge shown in the README, hence `id-token: write`).
 - `release.yml` — Changesets on `main`: opens the "Version Packages" PR, publishes to npm with provenance when it
@@ -72,7 +79,11 @@ Toolchain
   dependencies to sources (`customConditions: ["source"]`); `tsconfig.build.json` resets it so builds use `dist`.
 - `serialport` and `@abandonware/noble` are optional peer dependencies of `transports`: never add them to a
   package's `dependencies`, never import them statically. Tests inject fakes.
-- Public API changes: update the package's `index.ts`, its tests, its `AGENTS.md`, and run `pnpm check:types`.
+- `apps/docs` pins TypeScript 6.0.x (TypeDoc has no TypeScript 7 support); everything else uses 7. `pnpm build`
+  skips the site; `pnpm typecheck`, `check`, `knip`, `test` include it.
+- Public API changes: update the package's `index.ts`, its tests, its `AGENTS.md`, write a doc-comment on every
+  new top-level export (the reference is generated from them; `REFERENCE_STRICT=1 pnpm --filter @meshcorejs/docs
+  reference` lists the missing ones), and run `pnpm check:types`.
 
 Domain invariants (details in each package's `AGENTS.md`)
 

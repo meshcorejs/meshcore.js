@@ -1,0 +1,33 @@
+---
+title: Overriding texts
+description: English by default, French in one line, partial overrides, and what stays English.
+---
+
+Every text the library puts on the air comes from `client.replies`, the merge of `englishReplies` with
+the `replies` option given to the `Client`.
+
+## French in one line
+
+`frenchReplies` is a complete French set. Pass it as `replies` and every text is French, with the same
+parameters.
+
+<include lang="ts" meta='title="main.ts"'>../../../../snippets/client/replies.ts#french</include>
+
+## A few texts
+
+`replies` takes a partial object. Only the keys given replace the default. Function entries keep their
+parameters.
+
+<include lang="ts" meta='title="main.ts"'>../../../../snippets/client/replies.ts#partial</include>
+
+## What stays English
+
+Command names and actions are not translated. `help`, `plugins`, `jobs` and the actions `load`,
+`unload`, `reload`, `run`, `pause`, `resume` are the same in every bot.
+
+## Reference
+
+- [Replies](../reference/interfaces/Replies)
+- [englishReplies](../reference/variables/englishReplies)
+- [frenchReplies](../reference/variables/frenchReplies)
+- [mergeReplies](../reference/functions/mergeReplies)

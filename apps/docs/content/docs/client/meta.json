@@ -1,0 +1,19 @@
+{
+  "title": "@meshcorejs/client",
+  "description": "The bot framework",
+  "root": true,
+  "pages": [
+    "index",
+    "getting-started",
+    "guides",
+    "client",
+    "commands",
+    "events",
+    "jobs",
+    "permissions",
+    "plugins",
+    "replies",
+    "---Reference---",
+    "reference"
+  ]
+}

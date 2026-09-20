@@ -1,0 +1,26 @@
+---
+title: React to the mesh
+description: Run code when a node appears, an advert is heard, or the bot becomes ready.
+---
+
+A new contact appears in the radio's table. The bot sends it a welcome message.
+
+<include lang="ts" meta='title="events/welcome.ts"'>../../../../snippets/client/guides/react-to-the-mesh.ts#welcome</include>
+
+<include lang="ts" meta='title="events/heard.ts"'>../../../../snippets/client/guides/react-to-the-mesh.ts#advert</include>
+
+## What happens
+
+Files under `events/` are loaded at login. `setEvent()` picks one of the client's events. The handler's arguments are typed from it. A
+`contactAdd` handler receives a `Contact`, an `advert` handler an `Advert`.
+
+Handlers of the same event run in registration order. One that throws is reported through the `error`
+event and does not stop the others.
+
+`setOnce()` runs the handler a single time, for example on `ready`.
+
+## Go further
+
+- [Events you can listen to](../events/events-you-can-listen-to) for the full list.
+- [Handlers and isolation](../events/handlers-and-isolation) for order and error handling.
+- [EventBuilder](../reference/classes/EventBuilder) in the reference.

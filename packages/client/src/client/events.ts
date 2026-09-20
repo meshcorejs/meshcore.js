@@ -8,11 +8,13 @@ import type { Channel } from '../structures/channel.js';
 import type { Contact } from '../structures/contact.js';
 import type { Message } from '../structures/message.js';
 
+/** Where an error reported through the `error` event originated: which kind of brick, and its name if any. */
 export interface ErrorSource {
   type: 'command' | 'event' | 'job' | 'plugin' | 'internal';
   name?: string;
 }
 
+/** Every `client.on(...)` event with its arguments. */
 export interface ClientEvents extends Record<string, unknown[]> {
   ready: [];
   disconnect: [error?: Error];

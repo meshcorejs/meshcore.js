@@ -25,7 +25,7 @@ client.on('messageCreate', (message) => {
   console.log(`📨 ${where} from ${message.author.name}${message.backlog ? ' (backlog)' : ''}: ${message.content}`);
 });
 client.on('commandDenied', (ctx, reason) =>
-  console.warn(`⛔ ${ctx.author.name} → ${ctx.command?.name ?? '?'}: ${reason.type}`),
+  console.warn(`⛔ ${ctx.author.name} denied on ${ctx.command?.name ?? '?'}: ${reason.type}`),
 );
 client.on('error', (error, source) => console.error(`[${source.type}${source.name ? ` ${source.name}` : ''}]`, error));
 

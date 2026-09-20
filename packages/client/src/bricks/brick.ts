@@ -1,13 +1,15 @@
 export const BRICK = Symbol.for('meshcore.js.brick');
 
+/** Which kind of builder a `Brick` is, matching its scan folder (`permissions/`, `roles/`, `commands/`, …). */
 export type BrickKind = 'permission' | 'role' | 'command' | 'event' | 'job' | 'plugin';
 
+/** What every builder (`CommandBuilder`, `EventBuilder`, …) produces: a `build()` method tagged with its kind. */
 export interface Brick<Definition = unknown> {
   readonly [BRICK]: BrickKind;
   build(): Definition;
 }
 
-/** @param value Anything, true for a meshcore.js builder */
+/** Whether `value` is a meshcore.js builder instance, for custom loaders. */
 export function isBrick(value: unknown): value is Brick {
   return (
     typeof value === 'object' &&

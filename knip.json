@@ -23,6 +23,11 @@
     "packages/testing": {
       "entry": ["test/fixtures/**/*.ts"],
       "project": ["src/**/*.ts", "test/**/*.ts"]
+    },
+    "apps/*": {
+      "entry": ["scripts/*.ts", "snippets/**/*.ts"],
+      "project": ["**/*.{ts,tsx,mjs}", "!.next/**", "!.source/**", "!content/**"],
+      "ignoreDependencies": ["tailwindcss"]
     }
   }
 }

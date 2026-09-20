@@ -1,0 +1,28 @@
+---
+title: Answer a command
+description: A command that answers in a DM or on a channel, in a few lines.
+---
+
+Someone sends `/heard` to the bot. The bot answers with the nodes it heard in the last hour.
+
+<include lang="ts" meta='title="commands/heard.ts"'>../../../../snippets/client/guides/answer-a-command.ts#heard</include>
+
+<include lang="ts" meta='title="main.ts"'>../../../../snippets/client/guides/main.ts#main</include>
+
+## What happens
+
+The file is picked up at login because it sits in `commands/` and exports the builder. A missing name or
+handler stops the bot at startup with a clear message instead of failing later on the air.
+
+In a DM the trigger is `/heard`. On a channel it is `@ClubBot heard`, with the name the radio advertises.
+This rule is the same for every bot and cannot be changed.
+
+`ctx.reply()` answers where the command came from. The `MessageBuilder` keeps the answer under the 160-byte
+limit of a radio message and cuts the list when it is too long.
+
+## Go further
+
+- [Declaring a command](../commands/declaring-a-command) for aliases, scope and the reserved names.
+- [Read the arguments](./read-the-arguments) to take input from the person.
+- [Sending messages](../client/sending-messages) for the byte budgets and the send queue.
+- [CommandBuilder](../reference/classes/CommandBuilder) in the reference.

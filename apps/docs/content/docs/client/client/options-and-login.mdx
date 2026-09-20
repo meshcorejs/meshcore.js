@@ -1,0 +1,79 @@
+---
+title: Options and login
+description: What the Client takes, what login() does, and how it stays connected.
+---
+
+`Client` is the entry point. It logs into a Companion radio over a `Transport`, keeps the contact and
+channel caches, turns radio messages into `Message` objects, and runs the bricks you register. The
+constructor takes infrastructure only. Everything the bot does comes from bricks, one file each, loaded
+from the folders next to `main.ts`.
+
+## Options
+
+<include lang="ts" meta='title="main.ts"'>../../../../snippets/client/client.ts#construct</include>
+
+| Option      | Role                                                                                              |
+| ----------- | ------------------------------------------------------------------------------------------------- |
+| `transport` | Required. A `SerialTransport` (USB), `TcpTransport` (WiFi) or `BleTransport`.                     |
+| `radio`     | A `RadioConfig` applied at login. See [Radio settings](./radio-settings).                          |
+| `replies`   | A partial override of the texts the bot says on its own. See [Replies](../replies/overriding-texts). |
+| `logger`    | A `Logger`. Defaults to `createConsoleLogger()`. `silentLogger` disables logging.                  |
+| `appName`   | The name announced to the radio. Defaults to `meshcore.js`.                                        |
+| `load`      | The folder scanned for bricks at login, usually `import.meta.dirname`. See [Bricks and loading](./bricks-and-loading). |
+
+## The login sequence
+
+`login()` runs these steps in order and rejects if one fails.
+
+1. Validate every registered brick. An invalid one throws a `LoadError`.
+2. Connect the transport.
+3. Announce `appName` and receive `client.self`.
+4. Query the device and receive `client.device`. A firmware protocol version below 3 throws
+   `UnsupportedFirmwareError`.
+5. Sync the radio's clock.
+6. Apply the `radio` settings, if any.
+7. Fetch the contacts into `client.contacts`.
+8. Fetch the channels into `client.channels`.
+9. Drain the messages the radio queued while the bot was offline. They arrive through `messageCreate` with
+   `message.backlog` set to `true`.
+10. Start the jobs.
+11. Emit `ready`.
+
+## Caches and managers
+
+| Property                                                         | Holds                                                                       |
+| ---------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `client.contacts`                                                | The contact cache. `get()` takes a public key or a prefix of 12 characters. |
+| `client.channels`                                                | The channel cache. `get()` takes a name or a slot index.                    |
+| `client.self`                                                    | The radio's identity. Throws `ClientStateError` before login.               |
+| `client.device`                                                  | The radio's device info. Throws `ClientStateError` before login.            |
+| `client.commands`, `events`, `jobs`, `permissions`, `roles`, `plugins` | One manager per brick kind.                                          |
+| `client.radio`                                                   | Typed Companion commands. See [Radio settings](./radio-settings).           |
+
+Every cache is a `Collection`, a `Map` with `find`, `filter`, `map`, `some`, `every`, `first`,
+`toArray` and `sorted` on top of `get`, `has` and `size`.
+
+## Staying connected
+
+Transports never reconnect on their own. The client does, with an exponential backoff from 1 second up to
+60 seconds and unlimited attempts. It emits `disconnect` once when the link is lost and `reconnecting`
+before every retry.
+
+While connected, a health ping runs every 60 seconds. After two consecutive failures the client treats the
+radio as disconnected and starts reconnecting.
+
+After a reconnection the caches are reconciled with the radio. Only the differences emit their usual
+events (`contactAdd`, `channelUpdate` and so on).
+
+## Shutting down
+
+<include lang="ts" meta='title="main.ts"'>../../../../snippets/client/client.ts#destroy</include>
+
+`destroy()` stops accepting new work, flushes the send queue for up to 5 seconds, stops the jobs and the
+hot-reload watchers, and closes the transport.
+
+## Reference
+
+- [Client](../reference/classes/Client)
+- [ClientOptions](../reference/interfaces/ClientOptions)
+- [Collection](../reference/classes/Collection)

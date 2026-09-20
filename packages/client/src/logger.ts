@@ -1,3 +1,4 @@
+/** Logging sink a `Client` writes to; pass a custom one through `ClientOptions.logger` to plug in your own. */
 export interface Logger {
   /**
    * @param message Log line
@@ -21,11 +22,12 @@ export interface Logger {
   error(message: string, ...meta: unknown[]): void;
 }
 
+/** Minimum severity a `Logger` prints; `'silent'` prints nothing. */
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error' | 'silent';
 
 const ORDER: Record<LogLevel, number> = { debug: 0, info: 1, warn: 2, error: 3, silent: 4 };
 
-/** @param level Minimum level printed. Default info */
+/** Builds a `Logger` that writes to the console, prefixed `[meshcore.js]`, filtered by `level`. Default `'info'`. */
 export function createConsoleLogger(level: LogLevel = 'info'): Logger {
   const enabled = (at: LogLevel) => ORDER[at] >= ORDER[level];
   const noop = () => {};
@@ -37,4 +39,5 @@ export function createConsoleLogger(level: LogLevel = 'info'): Logger {
   };
 }
 
+/** A `Logger` that discards everything; the default for `@meshcorejs/testing` bots. */
 export const silentLogger: Logger = createConsoleLogger('silent');

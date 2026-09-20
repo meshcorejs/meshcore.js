@@ -25,7 +25,14 @@ export type { ClientEvents, ErrorSource } from './client/events.js';
 export type { LoadOptions } from './client/loader.js';
 export { Collection } from './collection.js';
 export { ArgBuilder, type ArgDefinition, type ArgType, type ArgValue } from './commands/args.js';
-export { Command, type CommandDefinition, type CommandScope } from './commands/command.js';
+export {
+  Command,
+  type CommandDefinition,
+  type CommandErrorHandler,
+  type CommandHandler,
+  type CommandScope,
+  type UsageErrorHandler,
+} from './commands/command.js';
 export { CommandBuilder } from './commands/command-builder.js';
 export { CommandManager } from './commands/command-manager.js';
 export { CommandContext, type DeniedContext, type DenyReason } from './commands/context.js';
@@ -89,6 +96,7 @@ export { type ResolvedMember, Role } from './permissions/role.js';
 export {
   type Member,
   type MemberInput,
+  type MemberList,
   type MemberSource,
   RoleBuilder,
   type RoleDefinition,
@@ -96,9 +104,9 @@ export {
 export { Plugin, type PluginState } from './plugins/plugin.js';
 export { type PluginBricksFactory, PluginBuilder, type PluginDefinition } from './plugins/plugin-builder.js';
 export { PluginManager } from './plugins/plugin-manager.js';
-export { Radio, type RadioOptions } from './radio/radio.js';
+export { Radio, type RadioEvents, type RadioOptions } from './radio/radio.js';
 export { RadioConfig, type RadioConfigOptions, type RadioSetting } from './radio/radio-config.js';
 export type { Location, RadioParams } from './radio/radio-settings.js';
 export { Channel } from './structures/channel.js';
 export { Contact, type ContactKind } from './structures/contact.js';
-export { type Author, Message, type UnverifiedAuthor } from './structures/message.js';
+export { type Author, Message, type MessageData, type UnverifiedAuthor } from './structures/message.js';

@@ -12,5 +12,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["weather-bot"]
+  "ignore": ["weather-bot", "@meshcorejs/docs"]
 }

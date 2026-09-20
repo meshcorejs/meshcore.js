@@ -3,6 +3,7 @@ import type { Client } from '../client/client.js';
 import type { MessageContent } from '../messages/send-queue.js';
 import type { SentMessage } from '../messages/sent-message.js';
 
+/** What kind of node a `Contact` is, decoded from the radio's contact type. */
 export type ContactKind = 'none' | 'chat' | 'repeater' | 'room' | 'sensor';
 
 const KINDS: Record<number, ContactKind> = {
@@ -13,6 +14,7 @@ const KINDS: Record<number, ContactKind> = {
   [ContactType.Sensor]: 'sensor',
 };
 
+/** A cached entry from the radio's contact table: identity, path, location, and `send()` for direct messages. */
 export class Contact {
   readonly client: Client;
   readonly verified = true as const;

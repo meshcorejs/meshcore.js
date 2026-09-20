@@ -1,0 +1,37 @@
+---
+title: Overview
+description: What @meshcorejs/transports is and what it is not.
+---
+
+Moves frame payloads between the app and a Companion radio behind one `Transport` interface:
+`TcpTransport` (WiFi), `SerialTransport` (USB), `BleTransport`. The `@meshcorejs/transports/mock` subpath
+ships `MockTransport` (in-memory) and `FakeRadio` (a firmware emulator) used by every test in the monorepo.
+
+```ts
+interface Transport extends TypedEmitter<{ frame: [Uint8Array]; close: [Error?] }> {
+  readonly kind: 'serial' | 'tcp' | 'ble' | 'mock';
+  readonly connected: boolean;
+  connect(signal?: AbortSignal): Promise<void>;
+  write(payload: Uint8Array): Promise<void>;
+  close(): Promise<void>;
+}
+```
+
+## What a transport does
+
+- Moves payloads: `write(payload)` sends one frame payload, `frame` events deliver one payload each.
+- Adds and strips the framing for its medium (serial/TCP: `'<'`/`'>' | len u16 LE`; BLE: one write or
+  notification is already one frame, no header).
+- Emits `close` only for an **unexpected** loss, never after the app itself called `close()`.
+
+## What a transport does not do
+
+No reconnection, no protocol knowledge, no queueing of outgoing writes: the `Client` in
+[`@meshcorejs/client`](/docs/client) owns all of that. A transport is a dumb pipe for bytes; everything
+stateful about the bot's session lives one layer up.
+
+## Reference
+
+- [Transport](./reference/main/interfaces/Transport)
+- [TransportEvents](./reference/main/interfaces/TransportEvents)
+- [TypedEmitter](./reference/main/classes/TypedEmitter)

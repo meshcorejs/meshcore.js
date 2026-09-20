@@ -5,16 +5,18 @@ import { Collection } from '../collection.js';
 import { LimitReachedError, MeshcoreError } from '../errors.js';
 import { Channel } from '../structures/channel.js';
 
-/** @param name Channel name starting with # */
+/** Derives the shared secret a hashtag channel (`#name`) uses from its name, SHA-256 truncated to the wire size. */
 export function hashtagChannelSecret(name: string): Uint8Array {
   return new Uint8Array(createHash('sha256').update(name, 'utf8').digest().subarray(0, CHANNEL_SECRET_SIZE));
 }
 
+/** Options for `ChannelManager.create()`. A `#`-prefixed `name` with no `secret` derives one from the name. */
 export interface CreateChannelOptions {
   name: string;
   secret?: Uint8Array;
 }
 
+/** `client.channels`: caches the radio's channel slots and creates or deletes channels. */
 export class ChannelManager {
   readonly client: Client;
   readonly cache = new Collection<number, Channel>();

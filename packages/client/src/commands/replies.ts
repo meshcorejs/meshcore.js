@@ -1,3 +1,4 @@
+/** Every text the bot says on its own: refusals, usage errors, and the answers of the built-in `help`, `plugins` and `jobs` commands. Functions receive what they need to format the reply. */
 export interface Replies {
   unknownCommandDM: string;
   unknownCommandChannel: string;
@@ -79,6 +80,7 @@ const jobLine: Replies['jobLine'] = (name, state, nextRun) =>
 
 const pluginLine: Replies['pluginLine'] = (name, loaded, count) => (loaded ? `${name} ✅ ${count}` : `${name} ⏸️`);
 
+/** The default replies, in English. */
 export const englishReplies: Replies = Object.freeze<Replies>({
   unknownCommandDM: '❓ Unknown command, /help',
   unknownCommandChannel: '❓ Unknown command',
@@ -111,6 +113,7 @@ export const englishReplies: Replies = Object.freeze<Replies>({
   unknownJob: '❓ Unknown job',
 });
 
+/** A complete French set of replies, to pass as `replies` to the `Client`. */
 export const frenchReplies: Replies = Object.freeze<Replies>({
   unknownCommandDM: '❓ Commande inconnue, /help',
   unknownCommandChannel: '❓ Commande inconnue',
@@ -143,9 +146,13 @@ export const frenchReplies: Replies = Object.freeze<Replies>({
   unknownJob: '❓ Job inconnu',
 });
 
+/** The default replies (`englishReplies`), under the name of the interface. */
 export const Replies: Replies = englishReplies;
 
-/** @param overrides Texts replacing the English defaults */
+/**
+ * The English defaults with `overrides` applied on top; what `Client` does with its `replies` option.
+ * @param overrides Texts replacing the English defaults
+ */
 export function mergeReplies(overrides: Partial<Replies> = {}): Replies {
   return Object.freeze<Replies>({ ...englishReplies, ...overrides });
 }

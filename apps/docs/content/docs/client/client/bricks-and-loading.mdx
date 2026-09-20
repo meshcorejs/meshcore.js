@@ -1,0 +1,77 @@
+---
+title: Bricks and loading
+description: The six bricks, one file per brick loaded from folders, register(), hot reload and validation.
+---
+
+Everything a bot adds to a `Client` is a brick. Commands, events, jobs, permissions, roles and plugins are
+declared with a builder, an object with chainable `set*` and `add*` methods. There is no plain-object
+configuration and no other way to register one.
+
+## The six bricks
+
+| Brick      | Builder             | Declares                                                                  |
+| ---------- | ------------------- | ------------------------------------------------------------------------- |
+| Command    | `CommandBuilder`    | A `/name` command with typed arguments, a required permission, a cooldown and a handler. |
+| Event      | `EventBuilder`      | A handler for one client event, run in registration order and isolated from the others. |
+| Job        | `JobBuilder`        | A scheduled task, cron or interval, started when the client is ready.      |
+| Permission | `PermissionBuilder` | A named permission that commands and roles refer to.                       |
+| Role       | `RoleBuilder`       | A priority, a set of permissions and members from a source you provide.    |
+| Plugin     | `PluginBuilder`     | A group of bricks that load, unload and reload together.                   |
+
+## One file per brick
+
+The `load` option scans the folders next to `main.ts` at login. The layout is fixed and scanned in this
+order, recursively.
+
+```
+permissions/
+roles/
+commands/
+events/
+jobs/
+plugins/
+```
+
+Every `.ts`, `.js`, `.mjs` or `.mts` file is imported and its `export default` is registered. Skipped
+are `.d.ts` files, `*.test.*` and `*.spec.*` files, and anything starting with `_`. The kind of a brick
+comes from its builder, not from its folder. A brick in the wrong folder logs a warning and still loads.
+
+<include lang="ts" meta='title="main.ts"'>../../../../snippets/client/bricks.ts#load</include>
+
+`load` accepts a path or a module URL. `import.meta.dirname` is the folder of the current file.
+`client.load(dir)` does the same after construction, for a second folder or a folder chosen at runtime.
+
+## register()
+
+<include lang="ts" meta='title="main.ts"'>../../../../snippets/client/bricks.ts#register</include>
+
+`client.register()` takes one builder or a list and returns the client. It is the way to add a brick built
+in code, for example from a configuration, or a plugin installed from npm. Bricks registered before `login()`
+are validated with the loaded ones. After `ready`, `register()` loads them at once and reports a failure
+through the `error` event instead of throwing.
+
+## Hot reload
+
+`client.load(dir, { watch: true })` keeps watching the folder. Changing a file reloads that file's bricks.
+Changing a file under `plugins/` reloads the whole plugin. If the new version fails to build, the previous
+brick stays registered and the failure is logged.
+
+## Validation
+
+Every builder validates itself in `build()`. Problems are collected, not thrown one at a time, so one call
+reports everything wrong in that brick. `login()` validates every registered brick in one pass and throws a
+single `LoadError` listing every problem, so a bot never starts half-broken.
+
+```
+2 problem(s) in bot bricks:
+  commands/heard.ts › command "heard" › required argument "kind" after optional argument "hours"
+  commands/no-default.ts › export default › is not a meshcore.js builder
+```
+
+## Reference
+
+- [Brick](../reference/interfaces/Brick)
+- [BrickKind](../reference/type-aliases/BrickKind)
+- [isBrick](../reference/functions/isBrick)
+- [LoadError](../reference/classes/LoadError)
+- [LoadOptions](../reference/interfaces/LoadOptions)

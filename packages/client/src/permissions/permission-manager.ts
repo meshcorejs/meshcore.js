@@ -6,11 +6,13 @@ import { type PermissionDefinition, type PermissionLike, Permissions, permission
 import { Role } from './role.js';
 import type { RoleDefinition } from './role-builder.js';
 
+/** A registered permission, as listed by `client.permissions`. */
 export interface Permission {
   readonly name: string;
   readonly description: string;
 }
 
+/** Someone holding a role: the public key (or prefix) from the role's members, its optional label, the cached `Contact` if the radio knows it, and the roles it holds. */
 export interface PermissionHolder {
   key: string;
   label?: string;
@@ -18,6 +20,7 @@ export interface PermissionHolder {
   roles: Role[];
 }
 
+/** `client.roles`: the registered roles, by name and in priority order, with the lookups used to check permissions. */
 export class RoleManager {
   readonly client: Client;
   readonly #all: Role[] = [];
@@ -76,6 +79,7 @@ export class RoleManager {
   }
 }
 
+/** `client.permissions`: the registered permissions and the checks the command dispatcher runs before a handler: `has()`, `missing()`, `holders()`. */
 export class PermissionManager {
   readonly client: Client;
   readonly #all: Permission[] = [];

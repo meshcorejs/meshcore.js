@@ -1,0 +1,28 @@
+---
+title: Overview
+description: What @meshcorejs/protocol is and what it is not.
+---
+
+Pure codec for the MeshCore Companion Radio protocol. It frames serial and TCP payloads, encodes the
+commands the app sends to the radio, decodes the responses and pushes the radio sends back, and encodes
+those same responses for `FakeRadio` to emulate a firmware.
+
+The package has **no I/O and no runtime dependency**. Every function takes and returns `Uint8Array` or plain
+objects; nothing opens a socket, a serial port or a BLE connection. Every byte layout comes from
+`examples/companion_radio/MyMesh.cpp` in `meshcore-dev/MeshCore@0679dbe` (`FIRMWARE_VER_CODE 13`), the
+firmware this library speaks.
+
+## Who uses it
+
+- [`@meshcorejs/transports`](/docs/transports) wraps payloads with the serial/TCP framing and uses the
+  response/push encoders to build `FakeRadio`.
+- [`@meshcorejs/client`](/docs/client) encodes every command it sends and decodes every frame a transport
+  emits.
+- [`@meshcorejs/testing`](/docs/testing) re-exports the `FakeRadio` built on top of this codec.
+
+Most bot code never imports `@meshcorejs/protocol` directly. The `Client` does the encoding and decoding.
+Reach for it when writing a transport, an emulator, or a test that inspects raw frames.
+
+## Reference
+
+- [Full reference](./reference)

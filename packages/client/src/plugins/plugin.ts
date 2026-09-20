@@ -4,8 +4,10 @@ import type { RegisteredBrick } from '../client/registry.js';
 import { ClientStateError, LoadError, type LoadIssue } from '../errors.js';
 import type { PluginDefinition } from './plugin-builder.js';
 
+/** Where a plugin is: `pending` until `login()` loads it, then `loaded` or `unloaded`. */
 export type PluginState = 'pending' | 'loaded' | 'unloaded';
 
+/** A registered plugin: its state, its current bricks, and `load()` / `unload()` / `reload()`. A failed reload keeps the previous bricks. */
 export class Plugin {
   readonly name: string;
   readonly description: string | undefined;

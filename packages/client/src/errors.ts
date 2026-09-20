@@ -4,6 +4,7 @@ import type { RadioSetting } from './radio/radio-config.js';
 
 export { ConnectionError, MeshcoreError, MissingDependencyError } from '@meshcorejs/transports';
 
+/** Thrown when a `Client` method is called in a state that forbids it (e.g. before `login()` resolves). */
 export class ClientStateError extends MeshcoreError {
   /** @param message What was called in the wrong state */
   constructor(message: string) {
@@ -11,6 +12,7 @@ export class ClientStateError extends MeshcoreError {
   }
 }
 
+/** Thrown by `login()` when the radio's Companion protocol version is older than the library requires. */
 export class UnsupportedFirmwareError extends MeshcoreError {
   readonly firmwareVersion: number;
   readonly minimumVersion: number;
@@ -29,6 +31,7 @@ export class UnsupportedFirmwareError extends MeshcoreError {
   }
 }
 
+/** Thrown when the radio does not answer a Companion command within its timeout. */
 export class CommandTimeoutError extends MeshcoreError {
   readonly command: string;
   readonly timeoutMs: number;
@@ -53,6 +56,7 @@ const RADIO_ERROR_LABELS: Record<number, string> = {
   [RadioErrorCode.IllegalArg]: 'illegal argument',
 };
 
+/** Thrown when the radio rejects a Companion command with an error code. */
 export class RadioError extends MeshcoreError {
   readonly command: string;
   readonly radioCode: number | null;
@@ -70,6 +74,7 @@ export class RadioError extends MeshcoreError {
   }
 }
 
+/** Thrown when the radio has no free channel or contact slot left for the requested operation. */
 export class LimitReachedError extends MeshcoreError {
   readonly resource: 'channels' | 'contacts';
   readonly limit: number;
@@ -85,6 +90,10 @@ export class LimitReachedError extends MeshcoreError {
   }
 }
 
+/**
+ * Thrown when a plain string does not fit its text budget; `MessageBuilder` with `setOverflow('truncate' |
+ * 'split')` avoids it instead of throwing.
+ */
 export class MessageTooLongError extends MeshcoreError {
   readonly bytes: number;
   readonly limit: number;
@@ -103,8 +112,10 @@ export class MessageTooLongError extends MeshcoreError {
   }
 }
 
+/** Why a DM delivery failed: no ACK after retries, expired in the queue, a radio error, or the client was destroyed. */
 export type DeliveryFailureReason = 'noAck' | 'expired' | 'radio' | 'destroyed';
 
+/** Rejection reason of the promise returned by `contact.send()` / `SentMessage` when a DM was not delivered. */
 export class DeliveryFailedError extends MeshcoreError {
   readonly reason: DeliveryFailureReason;
 
@@ -119,12 +130,14 @@ export class DeliveryFailedError extends MeshcoreError {
   }
 }
 
+/** One problem found while validating or loading a brick: which file and brick, and what was wrong. */
 export interface LoadIssue {
   file?: string;
   brick: string;
   message: string;
 }
 
+/** Thrown by `load()`, `login()` and `plugin.load()/unload()/reload()` when one or more bricks fail validation. */
 export class LoadError extends MeshcoreError {
   readonly issues: readonly LoadIssue[];
 
@@ -136,6 +149,7 @@ export class LoadError extends MeshcoreError {
   }
 }
 
+/** Thrown internally when a job's handler does not finish within its configured timeout; reported via `error`. */
 export class JobTimeoutError extends MeshcoreError {
   readonly job: string;
   readonly timeoutSeconds: number;
@@ -151,6 +165,7 @@ export class JobTimeoutError extends MeshcoreError {
   }
 }
 
+/** Thrown by `login()` when the radio refuses a setting from the `RadioConfig` applied at startup. */
 export class RadioConfigError extends MeshcoreError {
   readonly setting: RadioSetting;
   readonly radioCode: number | null;

@@ -2,8 +2,10 @@ import { ConnectionError } from '../errors.js';
 import type { Transport, TransportEvents } from '../transport.js';
 import { TypedEmitter } from '../typed-emitter.js';
 
+/** What a `MockTransport` calls with every payload the app writes; the fake radio answers through `transport.receive()`. */
 export type RadioHandler = (payload: Uint8Array, transport: MockTransport) => void;
 
+/** In-memory `Transport`: the app's writes go to a handler, `receive()` emits a frame as if the radio sent it, `simulateDisconnect()` a lost link. */
 export class MockTransport extends TypedEmitter<TransportEvents> implements Transport {
   readonly kind = 'mock';
   readonly written: Uint8Array[] = [];

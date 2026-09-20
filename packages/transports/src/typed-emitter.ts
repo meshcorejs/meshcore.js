@@ -1,9 +1,12 @@
 import { EventEmitter } from 'node:events';
 
+/** Event name → listener arguments, the shape a `TypedEmitter` is parameterised with. */
 export type EventMap = Record<string, unknown[]>;
 
+/** A listener of a `TypedEmitter` event. */
 export type Listener<Args extends unknown[]> = (...args: Args) => void;
 
+/** Minimal typed event emitter (`on`, `once`, `off`, `emit`) with no Node dependency, the base of every transport and of the `Client`. */
 export class TypedEmitter<Events extends EventMap> {
   readonly #emitter = new EventEmitter();
 

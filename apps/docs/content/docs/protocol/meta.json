@@ -1,0 +1,6 @@
+{
+  "title": "@meshcorejs/protocol",
+  "description": "Companion Radio protocol codec",
+  "root": true,
+  "pages": ["index", "---Reference---", "reference"]
+}

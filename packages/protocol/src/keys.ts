@@ -3,12 +3,18 @@ import { PUB_KEY_PREFIX_SIZE, PUB_KEY_SIZE } from './constants.js';
 
 const FULL_KEY = /^[0-9a-f]{64}$/;
 
-/** @param value Candidate 64 hex characters */
+/**
+ * Whether `value` is a full public key: 64 lowercase hex characters.
+ * @param value Candidate 64 hex characters
+ */
 export function isPublicKeyHex(value: string): boolean {
   return FULL_KEY.test(value);
 }
 
-/** @param publicKey 64 hex characters */
+/**
+ * The 32 bytes of a full public key.
+ * @param publicKey 64 hex characters
+ */
 export function publicKeyToBytes(publicKey: string): Uint8Array {
   const normalized = publicKey.toLowerCase();
   if (!FULL_KEY.test(normalized)) {
@@ -17,7 +23,10 @@ export function publicKeyToBytes(publicKey: string): Uint8Array {
   return fromHex(normalized);
 }
 
-/** @param keyOrPrefix At least 12 hex characters */
+/**
+ * The first 6 bytes of a public key or key prefix, as received messages identify senders.
+ * @param keyOrPrefix At least 12 hex characters
+ */
 export function publicKeyPrefixToBytes(keyOrPrefix: string): Uint8Array {
   const normalized = keyOrPrefix.toLowerCase();
   const size = PUB_KEY_PREFIX_SIZE * 2;

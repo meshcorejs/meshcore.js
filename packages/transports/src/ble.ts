@@ -3,10 +3,14 @@ import { importOptional } from './optional-import.js';
 import type { Transport, TransportEvents } from './transport.js';
 import { TypedEmitter } from './typed-emitter.js';
 
+/** The Nordic UART service the Companion firmware exposes over BLE. */
 export const BLE_SERVICE_UUID = '6e400001b5a3f393e0a9e50e24dcca9e';
+/** The characteristic the app writes frames to. */
 export const BLE_RX_CHARACTERISTIC_UUID = '6e400002b5a3f393e0a9e50e24dcca9e';
+/** The characteristic the radio notifies frames on. */
 export const BLE_TX_CHARACTERISTIC_UUID = '6e400003b5a3f393e0a9e50e24dcca9e';
 
+/** The part of a noble characteristic `BleTransport` uses; lets tests inject a fake. */
 export interface NobleCharacteristicLike {
   uuid: string;
   subscribeAsync(): Promise<void>;
@@ -15,6 +19,7 @@ export interface NobleCharacteristicLike {
   removeAllListeners(event?: string): unknown;
 }
 
+/** The part of a noble peripheral `BleTransport` uses; lets tests inject a fake. */
 export interface NoblePeripheralLike {
   address: string;
   advertisement: { localName?: string | undefined };
@@ -28,6 +33,7 @@ export interface NoblePeripheralLike {
   removeAllListeners(event?: string): unknown;
 }
 
+/** The part of `@abandonware/noble` `BleTransport` uses; lets tests inject a fake. */
 export interface NobleLike {
   state: string;
   on(event: 'stateChange', listener: (state: string) => void): unknown;
@@ -38,12 +44,14 @@ export interface NobleLike {
   stopScanningAsync(): Promise<void>;
 }
 
+/** Which radio to connect to: by BLE address, by advertised name, or the first Companion found; and how long to scan. */
 export interface BleTransportOptions {
   address?: string;
   name?: string;
   scanTimeoutMs?: number;
 }
 
+/** Test hook: how `BleTransport` loads noble (defaults to the optional dependency `@abandonware/noble`). */
 export interface BleTransportDeps {
   loadNoble?: () => Promise<NobleLike>;
 }
@@ -54,6 +62,7 @@ interface Connection {
   tx: NobleCharacteristicLike;
 }
 
+/** Transport over Bluetooth Low Energy (Nordic UART): scans for the radio, connects, one notification or write per frame. Needs `@abandonware/noble` installed. */
 export class BleTransport extends TypedEmitter<TransportEvents> implements Transport {
   readonly kind = 'ble';
   readonly #options: BleTransportOptions;

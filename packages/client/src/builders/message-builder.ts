@@ -2,12 +2,18 @@ import { utf8ByteLength } from '@meshcorejs/protocol';
 import { MessageTooLongError } from '../errors.js';
 import { DM_TEXT_BUDGET, truncateText, wrapLine } from '../messages/text.js';
 
+/** How `MessageBuilder.build()` handles text over budget: refuse, truncate, or split into numbered parts. */
 export type OverflowMode = 'error' | 'truncate' | 'split';
 
+/** Default `maxParts` for `MessageBuilder.setOverflow('split')`. */
 export const DEFAULT_MAX_PARTS = 3;
 
 type Entry = { kind: 'line'; text: string } | { kind: 'field'; name: string; value: string };
 
+/**
+ * Builds a byte-budgeted text: title, lines, fields, footer; `build(budget)` errors, truncates or splits per
+ * `setOverflow`.
+ */
 export class MessageBuilder {
   #title: string | null = null;
   #footer: string | null = null;

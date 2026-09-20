@@ -7,10 +7,14 @@ import type { Contact } from '../structures/contact.js';
 import { SentMessage } from './sent-message.js';
 import { channelTextBudget, DM_TEXT_BUDGET } from './text.js';
 
+/** What `contact.send()`, `channel.send()`, `ctx.reply()` and `SendQueue.send()` accept. */
 export type MessageContent = string | MessageBuilder;
 
+/** Minimum time between two transmissions on `SendQueue`, not configurable. */
 export const SEND_INTERVAL_MS = 2000;
+/** Resend attempts for a direct message before `SendQueue` resets the path and floods once, not configurable. */
 export const DM_MAX_RESENDS = 3;
+/** How long a queued message may wait for the radio before it fails with `DeliveryFailedError`, not configurable. */
 export const SEND_EXPIRY_MS = 5 * 60_000;
 
 interface QueuedPart {
@@ -29,10 +33,15 @@ interface AckWait {
   acks: number[];
 }
 
+/** Options for `SendQueue.send()`: an extra `prefix` (a mention) counted in the target's byte budget. */
 export interface SendOptions {
   prefix?: string;
 }
 
+/**
+ * The only path to the air: paces transmissions, waits for DM acknowledgements, resends and floods, expires
+ * messages the radio never got to.
+ */
 export class SendQueue {
   readonly #client: Client;
   readonly #parts: QueuedPart[] = [];

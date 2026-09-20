@@ -1,0 +1,28 @@
+---
+title: Lifecycle and errors
+description: When jobs start and stop, run, pause and resume, and what happens on failure.
+---
+
+Jobs start together when the client becomes ready and stop with `client.destroy()`. A job registered
+after `ready`, for example by a plugin loaded at runtime, starts at once.
+
+`client.jobs.get(name)` returns the running `Job`. `run()` triggers it now, following the overlap policy.
+`pause()` and `resume()` stop and restart its schedule. `nextRun`, `lastRun` and `running` report its
+state.
+
+<include lang="ts" meta='title="main.ts"'>../../../../snippets/client/jobs.ts#lifecycle</include>
+
+From a DM, `/jobs run|pause|resume <name>` does the same for anyone holding `Permissions.ManageJobs`.
+
+## Errors and timeouts
+
+A handler that throws, rejects or times out is reported through the `error` event with `source.type` set
+to `job` and `source.name` set to the job's name. The job keeps its schedule.
+
+<include lang="ts" meta='title="main.ts"'>../../../../snippets/client/jobs.ts#errors</include>
+
+## Reference
+
+- [Job](../reference/classes/Job)
+- [JobManager](../reference/classes/JobManager)
+- [JobTimeoutError](../reference/classes/JobTimeoutError)

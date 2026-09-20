@@ -1,6 +1,7 @@
 # meshcore.js
 
 [![CI](https://github.com/meshcorejs/meshcore.js/actions/workflows/ci.yml/badge.svg)](https://github.com/meshcorejs/meshcore.js/actions/workflows/ci.yml)
+[![Docs](https://github.com/meshcorejs/meshcore.js/actions/workflows/docs.yml/badge.svg)](https://github.com/meshcorejs/meshcore.js/actions/workflows/docs.yml)
 [![npm](https://img.shields.io/npm/v/@meshcorejs/client)](https://www.npmjs.com/package/@meshcorejs/client)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Plumber Score](https://score.getplumber.io/github.com/meshcorejs/meshcore.js.svg)](https://score.getplumber.io/github.com/meshcorejs/meshcore.js)
@@ -12,6 +13,16 @@ permissions and roles — declared with builders.
 > **Not the official client library.** [`meshcore-dev/meshcore.js`](https://github.com/meshcore-dev/meshcore.js)
 > (`@liamcottle/meshcore.js`) is the low-level Companion protocol client used by MeshCore apps.
 > This project is a **bot framework** with its own protocol layer.
+
+## Install
+
+```bash
+pnpm add @meshcorejs/client serialport          # radio plugged over USB
+pnpm add @meshcorejs/client                     # radio on WiFi (TCP)
+pnpm add @meshcorejs/client @abandonware/noble  # radio over Bluetooth
+```
+
+Works with npm and yarn too. Node.js 20 or newer.
 
 ## Packages
 
@@ -25,6 +36,10 @@ permissions and roles — declared with builders.
 Example: [`examples/weather-bot`](examples/weather-bot) (weather plugin, owner role, `RadioConfig`, morning
 bulletin, tests).
 
+## Documentation
+
+Guides and the API reference on https://meshcorejs.dev.
+
 ## Radio settings
 
 Declare the radio's identity and LoRa settings once; `login()` applies what differs and refuses to start if the
@@ -32,7 +47,7 @@ radio cannot honour it:
 
 ```ts
 const client = new Client({
-  transport: new TcpTransport({ host: '192.168.1.50' }),
+  transport: new SerialTransport({ path: '/dev/ttyACM0' }),
   radio: new RadioConfig({ name: 'TrainBot', txPower: 22, params: { frequency: 869.525, bandwidth: 250, spreadingFactor: 11, codingRate: 5 } }),
 });
 ```
@@ -77,7 +92,6 @@ pnpm check              # Biome: format + lint + import order
 pnpm check:publish      # publint
 pnpm knip               # unused code and dependencies
 pnpm check:types
-MESH_HOST=192.168.1.50 pnpm test:hw
 ```
 
 Contributions go through pull requests, see [CONTRIBUTING.md](CONTRIBUTING.md). Releases use

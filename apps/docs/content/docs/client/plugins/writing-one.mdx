@@ -1,0 +1,25 @@
+---
+title: Writing one
+description: What a plugin is, the bricks factory, and validation.
+---
+
+A plugin is a named group of bricks that load, unload and reload as one unit. It is the sixth brick and the
+only unit of dynamism in the library. To unload or reload a set of bricks at runtime, put them in a plugin.
+
+## The factory
+
+`setBricks((client, options) => [...])` runs when the plugin loads and on every `reload()`, never at
+construction. It returns the bricks. `addBricks(...)` is the static equivalent for a fixed list.
+
+<include lang="ts" meta='title="weather-plugin/index.ts"'>../../../../../../examples/weather-bot/src/weather-plugin/index.ts</include>
+
+## Validation
+
+The plugin's bricks are validated when the plugin loads. Problems are prefixed with the plugin's name, for
+example `weather › options: configure() is missing`.
+
+## Reference
+
+- [PluginBuilder](../reference/classes/PluginBuilder)
+- [PluginDefinition](../reference/interfaces/PluginDefinition)
+- [PluginBricksFactory](../reference/type-aliases/PluginBricksFactory)

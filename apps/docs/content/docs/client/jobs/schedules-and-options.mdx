@@ -1,0 +1,27 @@
+---
+title: Schedules and options
+description: Cron or interval, run on start, overlap, timeout and the connection rule.
+---
+
+A `JobBuilder` runs its handler on a schedule. `setCron(expression, { timezone })` takes a cron expression,
+parsed by [croner](https://github.com/hexagon/croner), with an optional IANA timezone. `setInterval(seconds)`
+takes a delay between runs. Exactly one of the two is required.
+
+<include lang="ts" meta='title="jobs/bulletin.ts"'>../../../../../../examples/weather-bot/src/jobs/bulletin.ts</include>
+
+## Options
+
+| Method                          | Effect                                                                              |
+| ------------------------------- | ----------------------------------------------------------------------------------- |
+| `setRunOnStart()`               | Also runs the job once when it starts. Off by default.                              |
+| `setOverlap('skip' \| 'queue')` | What happens when a run is due while the previous one is still going. `skip` drops it (default), `queue` runs it right after. |
+| `setTimeout(seconds)`           | Aborts the run past that delay. The handler's `signal` is aborted with a `JobTimeoutError`. `0` disables it (default). |
+| `setRequiresConnection(bool)`   | Skips a scheduled run while the radio is disconnected. On by default. A manual `run()` always runs. |
+
+<include lang="ts" meta='title="jobs/health-check.ts"'>../../../../snippets/client/jobs.ts#options</include>
+
+## Reference
+
+- [JobBuilder](../reference/classes/JobBuilder)
+- [JobRunInfo](../reference/interfaces/JobRunInfo)
+- [JobSchedule](../reference/type-aliases/JobSchedule)

@@ -37,6 +37,7 @@ import type { ClientEvents, ErrorSource } from './events.js';
 import { BrickLoader, type LoadOptions } from './loader.js';
 import { BrickRegistry } from './registry.js';
 
+/** Infrastructure for a `Client`: transport, optional radio config, replies override, logger, app name, bricks dir. */
 export interface ClientOptions {
   transport: Transport;
   radio?: RadioConfig;
@@ -46,14 +47,25 @@ export interface ClientOptions {
   load?: string | URL;
 }
 
+/** Lifecycle state of a `Client`, from construction to `destroy()`. */
 export type ClientStatus = 'idle' | 'connecting' | 'ready' | 'reconnecting' | 'destroyed';
 
+/** Delay before the first reconnection attempt; doubles on each further failure, not configurable. */
 export const RECONNECT_BASE_DELAY_MS = 1000;
+/** Cap on the exponential reconnection backoff, not configurable. */
 export const RECONNECT_MAX_DELAY_MS = 60_000;
+/** Interval between health-check pings once connected, not configurable. */
 export const HEALTH_CHECK_INTERVAL_MS = 60_000;
+/** Consecutive health-check failures before a reconnection is triggered, not configurable. */
 export const HEALTH_CHECK_MAX_FAILURES = 2;
+/** How long `destroy()` waits for in-flight sends to flush before closing anyway, not configurable. */
 export const DESTROY_FLUSH_TIMEOUT_MS = 5000;
 
+/**
+ * A bot: logs into a Companion radio over a Transport, keeps contact and channel caches, turns radio messages
+ * into `Message` objects and runs the registered bricks. Takes infrastructure only (transport, radio config,
+ * replies, logger); bot content comes from builders through `register()` / `load()`.
+ */
 export class Client extends TypedEmitter<ClientEvents> {
   readonly transport: Transport;
   readonly logger: Logger;

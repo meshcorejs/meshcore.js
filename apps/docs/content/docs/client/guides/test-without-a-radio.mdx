@@ -1,0 +1,24 @@
+---
+title: Test without a radio
+description: Drive the bot in Vitest on a fake radio, with simulated time.
+---
+
+The owner announces, the bot posts. A stranger tries, the bot refuses. Both checked in a test, without a
+radio.
+
+<include lang="ts" meta='title="announce.test.ts"'>../../../../snippets/client/guides/test-without-a-radio.test.ts#test</include>
+
+## What happens
+
+`createTestClient()` logs a real `Client` in on a `FakeRadio` and loads the bricks of a folder.
+`fakeContact()` and `fakeChannel()` fill the radio's tables.
+
+`dm()` sends a message as a contact and returns what the bot answered. `sentTo()` returns what the bot
+put on a channel.
+
+Time is simulated. `advanceTime('6h')` fires the jobs due in between. `destroy()` releases everything.
+
+## Go further
+
+- [@meshcorejs/testing](/docs/testing) for the package and its reference.
+- [TestBot](/docs/testing/reference/interfaces/TestBot) for every helper.

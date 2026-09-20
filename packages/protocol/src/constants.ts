@@ -1,3 +1,4 @@
+/** First byte of every app → radio command. */
 export const CommandCode = {
   AppStart: 1,
   SendTxtMsg: 2,
@@ -22,6 +23,7 @@ export const CommandCode = {
   SetChannel: 32,
 } as const;
 
+/** First byte of a radio → app response (below 0x80). */
 export const ResponseCode = {
   Ok: 0,
   Err: 1,
@@ -43,6 +45,7 @@ export const ResponseCode = {
   ChannelInfo: 18,
 } as const;
 
+/** First byte of a radio → app push, sent without a command (0x80 and above). */
 export const PushCode = {
   Advert: 0x80,
   PathUpdated: 0x81,
@@ -53,6 +56,7 @@ export const PushCode = {
   ContactsFull: 0x90,
 } as const;
 
+/** The `errorCode` of an `Err` response. */
 export const RadioErrorCode = {
   UnsupportedCmd: 1,
   NotFound: 2,
@@ -62,6 +66,7 @@ export const RadioErrorCode = {
   IllegalArg: 6,
 } as const;
 
+/** Contact kind stored in {@link ContactRecord}'s `type` field: none, chat, repeater, room or sensor. */
 export const ContactType = {
   None: 0,
   Chat: 1,
@@ -70,19 +75,30 @@ export const ContactType = {
   Sensor: 4,
 } as const;
 
+/** The `txtType` of a text message: plain, CLI data, or signed plain. */
 export const TxtType = {
   Plain: 0,
   CliData: 1,
   SignedPlain: 2,
 } as const;
 
+/** Largest frame payload the firmware accepts, in bytes. */
 export const MAX_FRAME_SIZE = 176;
+/** A public key, in bytes (64 hex characters). */
 export const PUB_KEY_SIZE = 32;
+/** The public-key prefix that identifies a sender in received messages, in bytes. */
 export const PUB_KEY_PREFIX_SIZE = 6;
+/** Largest route (`Path`) the firmware stores, in bytes. */
 export const MAX_PATH_SIZE = 64;
+/** Longest text in a message, in UTF-8 bytes. */
 export const MAX_TEXT_LEN = 160;
+/** The fixed-size name field of contacts and self info, in bytes (NUL-padded). */
 export const NAME_FIELD_SIZE = 32;
+/** A channel secret, in bytes. */
 export const CHANNEL_SECRET_SIZE = 16;
+/** The `pathLen` meaning the route to a contact is unknown. */
 export const OUT_PATH_UNKNOWN = 0xff;
+/** The Companion protocol version this codec speaks. */
 export const APP_TARGET_VERSION = 3;
+/** Oldest firmware protocol version the client accepts at login. */
 export const MIN_FIRMWARE_VERSION = 3;

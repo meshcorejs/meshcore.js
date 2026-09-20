@@ -27,6 +27,11 @@ type WithArg<Args, N extends string, V, R extends boolean> = Simplify<
   Args & { [K in N]: R extends true ? V : V | undefined }
 >;
 
+/**
+ * Declares a command. Chain `setName`, `setDescription`, `addArg`…, `setHandler`, then `build()` — which throws
+ * a `LoadError` listing every problem. Triggered by `/name` in DM and `@Bot name` on channels; this rule is
+ * fixed.
+ */
 // biome-ignore lint/complexity/noBannedTypes: {} is the identity of the Args accumulation
 export class CommandBuilder<Args extends object = {}> implements Brick<CommandDefinition> {
   readonly [BRICK] = 'command' as const;

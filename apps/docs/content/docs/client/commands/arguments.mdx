@@ -1,0 +1,41 @@
+---
+title: Arguments
+description: The eight argument types, their rules, and how ctx.args gets its type.
+---
+
+Each argument is declared with one method taking a builder callback.
+
+| Method           | Parsed type                                  |
+| ---------------- | -------------------------------------------- |
+| `addStringArg`   | `string`                                     |
+| `addIntegerArg`  | `number`                                     |
+| `addNumberArg`   | `number`                                     |
+| `addBooleanArg`  | `boolean`                                    |
+| `addChoiceArg`   | The union given to `setChoices()`            |
+| `addContactArg`  | A `Contact` resolved from the radio's table  |
+| `addRoleArg`     | A `Role` resolved from the registered roles  |
+| `addChannelArg`  | A `Channel` resolved from the radio's table  |
+
+<include lang="ts" meta='title="commands/forecast.ts"'>../../../../snippets/client/commands.ts#args</include>
+
+## Rules
+
+These rules are checked at `build()`.
+
+- Argument names are unique.
+- A required argument cannot follow an optional one.
+- `setDefault()` makes an argument optional.
+- `setRest()` takes the rest of the line. String arguments only, last argument only.
+
+Values are split on whitespace. Double quotes keep a value with spaces together.
+
+## Usage errors
+
+A missing, invalid or extra value never reaches the handler. The bot answers with `missingArgument`,
+`invalidArgument` or `tooManyArguments` from `client.replies`, followed by the usage line.
+`setUsageErrorHandler()` replaces that reply for one command.
+
+## Reference
+
+- [ArgBuilder](../reference/classes/ArgBuilder)
+- [ArgumentError](../reference/classes/ArgumentError)

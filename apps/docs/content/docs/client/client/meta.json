@@ -1,0 +1,4 @@
+{
+  "title": "Client",
+  "pages": ["options-and-login", "bricks-and-loading", "radio-settings", "sending-messages", "errors-and-logging"]
+}

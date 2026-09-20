@@ -4,6 +4,7 @@ import type { LoadIssue } from '../errors.js';
 import { Job } from './job.js';
 import type { JobDefinition } from './job-builder.js';
 
+/** `client.jobs`: the registered jobs by name, started after `ready` and stopped on `destroy()`. */
 export class JobManager {
   readonly client: Client;
   readonly cache = new Collection<string, Job>();

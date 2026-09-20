@@ -14,6 +14,6 @@ export default defineConfig({
       reporter: ['text-summary', 'html'],
       reportsDirectory: 'coverage',
     },
-    include: ['packages/*/test/**/*.test.ts', 'examples/*/test/**/*.test.ts'],
+    include: ['packages/*/test/**/*.test.ts', 'examples/*/test/**/*.test.ts', 'apps/*/test/**/*.test.ts'],
   },
 });

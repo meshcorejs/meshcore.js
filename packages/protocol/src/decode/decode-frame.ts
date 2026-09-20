@@ -109,7 +109,10 @@ function decodeChannelMessage(r: ByteReader, code: number): ResponseFrame {
   };
 }
 
-/** @param bytes Frame payload without framing */
+/**
+ * Decode one radio → app payload into a typed frame: a response, a push, `unknown` for a code this codec does not know, `malformed` when the bytes do not fit the layout.
+ * @param bytes Frame payload without framing
+ */
 export function decodeFrame(bytes: Uint8Array): DecodedFrame {
   const code = bytes[0];
   if (code === undefined) {

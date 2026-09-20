@@ -1,6 +1,6 @@
 const UNITS: Record<string, number> = { ms: 1, s: 1000, m: 60_000, h: 3_600_000, d: 86_400_000 };
 
-/** @param duration Milliseconds, or a string like 30s, 5m, 1h, 1d */
+/** Milliseconds of a duration given as a number or as `"30s"`, `"5m"`, `"1d"` (units: ms, s, m, h, d); what `bot.advanceTime()` accepts. */
 export function parseDuration(duration: string | number): number {
   if (typeof duration === 'number') {
     if (!(duration >= 0)) throw new RangeError(`invalid duration ${duration}`);

@@ -9,4 +9,4 @@ allo = "allo"
 trian = "trian"
 
 [files]
-extend-exclude = ["pnpm-lock.yaml", "dist", "coverage", "docs/superpowers", ".superpowers", "*.hex"]
+extend-exclude = ["pnpm-lock.yaml", "dist", "coverage", "docs/superpowers", ".superpowers", "*.hex", "apps/docs/.next", "apps/docs/content/docs/*/reference", "apps/docs/next-env.d.ts"]

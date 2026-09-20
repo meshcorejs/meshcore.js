@@ -5,6 +5,7 @@ import { Contact } from '../structures/contact.js';
 
 const HEX = /^[0-9a-f]+$/;
 
+/** Payload of the `advert` event: a heard node's key and name, its cached `Contact` if known, and the raw record. */
 export interface Advert {
   publicKey: string;
   name: string;
@@ -12,6 +13,7 @@ export interface Advert {
   record: ContactRecord;
 }
 
+/** `client.contacts`: caches the radio's contact table, looks contacts up by key or prefix, removes them. */
 export class ContactManager {
   readonly client: Client;
   readonly cache = new Collection<string, Contact>();

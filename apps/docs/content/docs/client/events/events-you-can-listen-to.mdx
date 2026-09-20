@@ -1,0 +1,34 @@
+---
+title: Events you can listen to
+description: Every client event, when it fires, and its arguments.
+---
+
+| Event              | When                                                     | Arguments                                   |
+| ------------------ | -------------------------------------------------------- | ------------------------------------------- |
+| `ready`            | `login()` finished the handshake                          |                                             |
+| `disconnect`       | The connection to the radio was lost                      | `error?: Error`                             |
+| `reconnecting`     | A reconnection attempt is about to run                    | `attempt: number, delayMs: number`          |
+| `error`            | A handler, event, job or plugin failed                    | `error: Error, source: ErrorSource`         |
+| `messageCreate`    | A DM or channel message was received                      | `message: Message`                          |
+| `messageDelivered` | A DM was acknowledged by the recipient                    | `sent: SentMessage`                         |
+| `messageFailed`    | A DM could not be delivered                               | `sent: SentMessage, error: DeliveryFailedError` |
+| `advert`           | An advert was heard from a node                           | `advert: Advert`                            |
+| `contactAdd`       | A new contact appeared in the radio's table               | `contact: Contact`                          |
+| `contactUpdate`    | An existing contact changed                               | `oldContact: Contact, newContact: Contact`  |
+| `contactRemove`    | A contact was removed                                     | `contact: Contact`                          |
+| `contactsFull`     | The radio's contact table has no free slot                |                                             |
+| `channelUpdate`    | A channel slot changed                                    | `oldChannel: Channel \| null, newChannel: Channel \| null` |
+| `commandRun`       | A command handler ran                                     | `ctx: CommandContext`                       |
+| `commandError`     | A command handler threw                                   | `error: Error, ctx: CommandContext`         |
+| `commandDenied`    | A command was refused before its handler                  | `ctx: DeniedContext, reason: DenyReason`    |
+| `pluginLoad`       | A plugin finished loading                                 | `plugin: Plugin`                            |
+| `pluginUnload`     | A plugin was unloaded                                     | `plugin: Plugin`                            |
+| `raw`              | Every decoded frame from the radio, for debugging         | `frame: DecodedFrame`                       |
+
+`client.on()` and an `EventBuilder` receive the same arguments. The builder's handler gets the client
+first.
+
+## Reference
+
+- [ClientEvents](../reference/interfaces/ClientEvents)
+- [ErrorSource](../reference/interfaces/ErrorSource)

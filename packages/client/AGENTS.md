@@ -88,6 +88,8 @@ test/
   `Permissions` (`Administrator`, `ManageRoles`, `ManageContacts`, `ManageChannels`, `ManageJobs`,
   `ViewPermissions`, `ManagePlugins`). `Brick`, `BrickKind`, `isBrick` are exported for custom loaders (`BRICK` stays
   internal). `Command.core` marks the built-in commands.
+- Handler and data types used in public signatures are exported for typing user code: `CommandHandler`,
+  `UsageErrorHandler`, `CommandErrorHandler`, `MemberList`, `MessageData`, `RadioEvents`.
 - Plugins: `PluginBuilder<Options>` is the sixth brick — `setBricks((client, options) => bricks)` or
   `addBricks(...)`, `configure(options)` returns a configured **copy** (absent from the type when
   `Options = void`); the factory runs at load, never at construction. `client.plugins` (`cache`, `size`,

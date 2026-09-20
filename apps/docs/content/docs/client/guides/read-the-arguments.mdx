@@ -1,0 +1,26 @@
+---
+title: Read the arguments
+description: Declare what a command takes and get it typed in the handler.
+---
+
+`/heard 6 repeater` lists the repeaters heard in the last six hours. Both values are optional and have a
+default.
+
+<include lang="ts" meta='title="commands/heard.ts"'>../../../../snippets/client/guides/read-the-arguments.ts#args</include>
+
+## What happens
+
+Each `add*Arg` call declares one argument. `ctx.args` is typed from these calls, so `hours` is a
+`number` and `kind` is `'chat' | 'repeater'` without a cast.
+
+A value outside the range, or a kind that is not in the list, never reaches the handler. The bot answers
+with the usage line instead.
+
+Values are split on spaces. Double quotes keep a value with spaces together. A string argument with
+`setRest()` takes the rest of the line.
+
+## Go further
+
+- [Arguments](../commands/arguments) for the eight argument types and their rules.
+- [Context and pipeline](../commands/context-and-pipeline) for what runs before the handler.
+- [ArgBuilder](../reference/classes/ArgBuilder) in the reference.

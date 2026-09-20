@@ -1,0 +1,23 @@
+---
+title: Channels are untrusted
+description: Why a protected command never runs from a channel.
+---
+
+<Callout type="warn">
+A channel message carries a sender name in plain text and nothing that proves it. Anyone can write any name.
+</Callout>
+
+A command with `setRequiredPermissions()` is therefore always refused on a channel, whatever its scope.
+The role check never runs. The bot answers with `channelUntrusted` and asks the person to send the command
+in a DM, where the sender is a verified contact.
+
+The same rule applies to the built-in helper. On a channel it only lists the commands that need no
+permission.
+
+`ctx.author.verified` tells a handler which case it is in. `ctx.replyDM()` rejects for an unverified
+author.
+
+## Reference
+
+- [Author](../reference/type-aliases/Author)
+- [UnverifiedAuthor](../reference/interfaces/UnverifiedAuthor)

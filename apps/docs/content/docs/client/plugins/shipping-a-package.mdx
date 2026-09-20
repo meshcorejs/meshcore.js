@@ -1,0 +1,17 @@
+---
+title: Shipping a package
+description: Publish a plugin on npm so any bot can install it.
+---
+
+Export the unconfigured `PluginBuilder` as the package's default export. If the plugin needs a service,
+export its class next to it, as `weather-plugin/index.ts` does with `WeatherService`.
+
+A bot installs the package, creates the service itself, and exports `plugin.configure({ ... })` from a file
+under `plugins/`. Several files, each with its own `setName()`, run the same plugin with different options
+side by side.
+
+Tag the repository with the `meshcorejs-plugin` topic on GitHub so people find it.
+
+## Reference
+
+- [PluginBuilder](../reference/classes/PluginBuilder)

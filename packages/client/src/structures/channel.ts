@@ -3,6 +3,7 @@ import type { Client } from '../client/client.js';
 import type { MessageContent } from '../messages/send-queue.js';
 import type { SentMessage } from '../messages/sent-message.js';
 
+/** A cached channel slot: name, secret, and `send()` to broadcast on it. */
 export class Channel {
   readonly client: Client;
   #record: ChannelRecord;

@@ -1,0 +1,4 @@
+{
+  "title": "Events",
+  "pages": ["handlers-and-isolation", "events-you-can-listen-to"]
+}

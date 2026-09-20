@@ -1,0 +1,40 @@
+---
+title: All replies
+description: Every key of client.replies and its English default.
+---
+
+| Key                               | English default                                                                       |
+| --------------------------------- | ------------------------------------------------------------------------------------- |
+| `unknownCommandDM`                | `❓ Unknown command, /help`                                                            |
+| `unknownCommandChannel`           | `❓ Unknown command`                                                                   |
+| `noCommands`                      | `No commands available`                                                               |
+| `internalError`                   | `❌ Internal error`                                                                    |
+| `channelUntrusted`                | `↪️ Send me this command in a DM`                                                      |
+| `missingPermissions`              | `⛔ Permission denied`                                                                 |
+| `cooldown(seconds)`               | `⏳ Try again in ${seconds}s`                                                           |
+| `invalidArgument(name, usage)`    | `⚠️ ${name} is invalid\n${usage}`                                                      |
+| `missingArgument(name, usage)`    | `⚠️ ${name} is missing\n${usage}`                                                      |
+| `tooManyArguments(usage)`         | `⚠️ too many arguments\n${usage}`                                                      |
+| `usage(usage)`                    | `⚠️ usage\n${usage}`                                                                   |
+| `noPlugins`                       | `No plugins`                                                                           |
+| `pluginLine(name, loaded, count)` | `${name} ✅ ${count}` when loaded, `${name} ⏸️` when unloaded                          |
+| `pluginLoaded(name, count)`       | `✅ ${name} loaded (${count})`                                                         |
+| `pluginReloaded(name, count)`     | `✅ ${name} reloaded (${count})`                                                       |
+| `pluginUnloaded(name)`            | `⏸️ ${name} unloaded`                                                                  |
+| `pluginAlreadyLoaded(name)`       | `ℹ️ ${name} is already loaded`                                                         |
+| `pluginAlreadyUnloaded(name)`     | `ℹ️ ${name} is already unloaded`                                                       |
+| `pluginFailed(name, issue)`       | `❌ ${name}: ${issue}`                                                                 |
+| `unknownPlugin`                   | `❓ Unknown plugin`                                                                    |
+| `noJobs`                          | `No jobs`                                                                              |
+| `jobLine(name, state, nextRun)`   | `${name} ▶️ ${nextRun}` when scheduled, `${name} ⏸️` when paused, `${name} 🔄` when running |
+| `jobStarted(name)`                | `▶️ ${name} started`                                                                   |
+| `jobAlreadyRunning(name)`         | `ℹ️ ${name} is already running`                                                        |
+| `jobPaused(name)`                 | `⏸️ ${name} paused`                                                                    |
+| `jobResumed(name)`                | `▶️ ${name} resumed`                                                                   |
+| `jobAlreadyPaused(name)`          | `ℹ️ ${name} is already paused`                                                         |
+| `jobNotPaused(name)`              | `ℹ️ ${name} is not paused`                                                             |
+| `unknownJob`                      | `❓ Unknown job`                                                                       |
+
+## Reference
+
+- [Replies](../reference/interfaces/Replies)

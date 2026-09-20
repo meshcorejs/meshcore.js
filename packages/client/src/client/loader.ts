@@ -10,6 +10,7 @@ import type { BrickSource, RegisteredBrick } from './registry.js';
 const EXTENSIONS = new Set(['.js', '.mjs', '.ts', '.mts']);
 export const RELOAD_DEBOUNCE_MS = 100;
 
+/** Options for `client.load()`. `watch: true` hot-reloads bricks per file as they change on disk. */
 export interface LoadOptions {
   watch?: boolean;
 }

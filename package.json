@@ -7,7 +7,7 @@
     "node": ">=22.12"
   },
   "scripts": {
-    "build": "pnpm -r build",
+    "build": "pnpm -r --filter '!@meshcorejs/docs' build",
     "typecheck": "pnpm -r typecheck",
     "test": "vitest run",
     "format": "biome format --write .",

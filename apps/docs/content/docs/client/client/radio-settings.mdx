@@ -1,0 +1,49 @@
+---
+title: Radio settings
+description: RadioConfig, what login() applies, what happens when the radio refuses, and client.radio.
+---
+
+The radio's identity and LoRa settings are declared once, as the `radio` option. `login()` compares them
+with what the radio reports and applies only what differs.
+
+## Declare once
+
+<include lang="ts" meta='title="main.ts"'>../../../../snippets/client/radio-config.ts#config</include>
+
+Fields use app units. `frequency` is in MHz, `bandwidth` in kHz, `txPower` in dBm, `location` in
+decimal degrees. Every field is optional and an absent field is never touched. The instance is validated
+and frozen at construction.
+
+## What login() applies
+
+Right after the clock sync, the client diffs the declared settings against `client.self`.
+
+- Only the fields you declared are compared, and only a field that differs is written.
+- `txPower` is checked against the radio's maximum before anything is sent. A value above it fails
+  `login()` without touching the radio.
+- After applying changes, the client announces itself again so `client.self` reflects the radio.
+- If `name` or `location` changed, the client floods one advert so the mesh learns the new identity.
+- `params` is written with the repeater flag only on firmware protocol version 9 and later.
+
+## When the radio refuses
+
+A setting the radio rejects raises a `RadioConfigError` with the rejected `setting` and the radio's
+`radioCode`. `login()` fails. During a reconnection the same error is retried with the rest of the
+handshake.
+
+## Changing settings at runtime
+
+Past `login()`, the same settings can be changed through `client.radio`.
+
+<include lang="ts" meta='title="main.ts"'>../../../../snippets/client/radio-config.ts#runtime</include>
+
+`setAdvertName`, `setAdvertLatLon`, `setTxPower` and `setRadioParams` validate their input first. An
+out-of-range value throws `RangeError` before any request is sent. A refusal by the radio rejects with
+`RadioError`.
+
+## Reference
+
+- [RadioConfig](../reference/classes/RadioConfig)
+- [RadioConfigOptions](../reference/interfaces/RadioConfigOptions)
+- [RadioConfigError](../reference/classes/RadioConfigError)
+- [Radio](../reference/classes/Radio)

@@ -2,8 +2,10 @@ import { BRICK, type Brick } from '../bricks/brick.js';
 import { LoadError } from '../errors.js';
 
 export const PERMISSION_NAME_PATTERN = /^[a-z0-9_.-]{1,64}$/;
+/** The prefix of built-in permission names (`core.administrator`, …); user permissions cannot use it. */
 export const CORE_PERMISSION_PREFIX = 'core.';
 
+/** What a `PermissionBuilder` builds: a name and a description. */
 export interface PermissionDefinition {
   name: string;
   description: string;
@@ -52,6 +54,7 @@ export class PermissionBuilder implements Brick<PermissionDefinition> {
 const core = (name: string, description: string) =>
   new PermissionBuilder({ core: true }).setName(`${CORE_PERMISSION_PREFIX}${name}`).setDescription(description);
 
+/** The built-in permissions: `Administrator` implies every other one; the `Manage*` ones gate the built-in commands and the managers. */
 export const Permissions = Object.freeze({
   Administrator: core('administrator', 'Every permission'),
   ManageRoles: core('manage_roles', 'Give and remove roles (limited by role hierarchy)'),
@@ -62,6 +65,7 @@ export const Permissions = Object.freeze({
   ViewPermissions: core('view_permissions', 'See who has which role'),
 });
 
+/** Anything that names a permission: a `PermissionBuilder`, an object with a `name`, or the name itself. */
 export type PermissionLike = PermissionBuilder | string | { readonly name: string };
 
 export function permissionName(permission: PermissionLike): string {

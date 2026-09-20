@@ -12,6 +12,10 @@ import { parseTrigger } from './trigger.js';
 
 export const HELPER_MAX_PARTS = 3;
 
+/**
+ * `client.commands`: matches incoming messages against registered commands, runs the pipeline (trigger, scope,
+ * backlog, permissions, cooldown, argument parsing, handler), and answers the built-in helper.
+ */
 export class CommandManager {
   readonly client: Client;
   readonly cache = new Collection<string, Command>();

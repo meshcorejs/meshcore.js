@@ -3,6 +3,7 @@ import type { Client } from '../client/client.js';
 import { JobTimeoutError } from '../errors.js';
 import type { JobDefinition } from './job-builder.js';
 
+/** A registered job: run it now, pause and resume it, read its last and next run. Built from a `JobBuilder` by the client. */
 export class Job {
   readonly client: Client;
   readonly name: string;

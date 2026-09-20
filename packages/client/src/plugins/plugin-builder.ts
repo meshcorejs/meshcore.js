@@ -4,11 +4,13 @@ import { LoadError } from '../errors.js';
 
 export const PLUGIN_NAME_PATTERN = /^[a-z0-9_-]{1,32}$/;
 
+/** The function a plugin runs to build its bricks, on load and on every reload; receives the client and the plugin's options. */
 export type PluginBricksFactory<Options> = (
   client: Client,
   options: Options,
 ) => Iterable<Brick> | Promise<Iterable<Brick>>;
 
+/** What a `PluginBuilder` builds: name, description, the bricks factory, the options given to `configure()`, and whether it was configured. */
 export interface PluginDefinition<Options = unknown> {
   name: string;
   description: string | undefined;

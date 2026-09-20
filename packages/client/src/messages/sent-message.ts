@@ -2,12 +2,14 @@ import type { DeliveryFailedError } from '../errors.js';
 import type { Channel } from '../structures/channel.js';
 import type { Contact } from '../structures/contact.js';
 
+/** Delivery state of a `SentMessage`: queued in `SendQueue`, on the air, DM-acknowledged, or failed. */
 export type SentMessageStatus = 'queued' | 'sent' | 'delivered' | 'failed';
 
 type PartStatus = SentMessageStatus;
 
 type Waiter = { resolve: () => void; reject: (error: Error) => void };
 
+/** A message handed to `SendQueue`, tracked across its parts until sent, delivered or failed. */
 export class SentMessage {
   readonly target: Contact | Channel;
   readonly parts: readonly string[];

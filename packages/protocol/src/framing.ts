@@ -1,8 +1,11 @@
 import { MAX_FRAME_SIZE } from './constants.js';
 
+/** The `'<'` byte opening an app → radio serial/TCP frame. */
 export const TO_RADIO_MARKER = 0x3c;
+/** The `'>'` byte opening a radio → app serial/TCP frame. */
 export const FROM_RADIO_MARKER = 0x3e;
 
+/** Which side sends the frame; selects the marker byte. */
 export type FrameDirection = 'toRadio' | 'fromRadio';
 
 function markerFor(direction: FrameDirection): number {
@@ -10,6 +13,7 @@ function markerFor(direction: FrameDirection): number {
 }
 
 /**
+ * Wrap a payload in the serial/TCP framing: marker, length (u16 little-endian), payload.
  * @param payload Frame payload
  * @param direction toRadio or fromRadio. Default toRadio
  */
@@ -27,6 +31,7 @@ export function encodeFrame(payload: Uint8Array, direction: FrameDirection = 'to
 
 type DecoderState = 'idle' | 'lengthLow' | 'lengthHigh' | 'body';
 
+/** Reassemble serial/TCP frames from a byte stream: feed chunks, get complete payloads; bytes before a marker are skipped. */
 export class FrameDecoder {
   readonly #marker: number;
   #state: DecoderState = 'idle';

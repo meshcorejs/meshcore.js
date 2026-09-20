@@ -1,11 +1,9 @@
 import { MAX_TEXT_LEN, utf8ByteLength } from '@meshcorejs/protocol';
 
+/** Direct-message text budget in UTF-8 bytes: 158, the firmware's limit from the fourth delivery attempt. */
 export const DM_TEXT_BUDGET = MAX_TEXT_LEN - 2;
 
-/**
- * @param selfName Name of this radio
- * @param mention Mention prefix counted in the budget
- */
+/** Channel text budget in UTF-8 bytes: 160 minus `"<selfName>: "` and an optional reply `mention` prefix. */
 export function channelTextBudget(selfName: string, mention = ''): number {
   return MAX_TEXT_LEN - utf8ByteLength(`${selfName}: `) - utf8ByteLength(mention);
 }

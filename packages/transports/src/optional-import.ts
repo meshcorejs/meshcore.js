@@ -14,7 +14,10 @@ async function importFromApplication<T>(moduleName: string): Promise<T> {
   return (await import(pathToFileURL(require.resolve(moduleName)).href)) as T;
 }
 
-/** @param moduleName Package to import */
+/**
+ * Import an optional dependency from the library or, failing that, from the application's `node_modules`; throws `MissingDependencyError` when neither has it.
+ * @param moduleName Package to import
+ */
 export async function importOptional<T>(moduleName: string): Promise<T> {
   try {
     return (await import(moduleName)) as T;

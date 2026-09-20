@@ -1,0 +1,11 @@
+---
+title: Overview
+description: What @meshcorejs/testing is and what it is not.
+---
+
+Lets bot authors test a whole bot without a radio: `createTestClient()` logs a real `Client` in on a
+`FakeRadio` through a `MockTransport`, installs simulated time (`@sinonjs/fake-timers`), and offers
+`dm()` / `channel()` helpers that return everything the bot put on the air. Re-exports the `/mock` tools of
+`@meshcorejs/transports` for lower-level tests.
+
+The [reference](./reference) lists `createTestClient()`, `TestBot` and `TestClientOptions`.

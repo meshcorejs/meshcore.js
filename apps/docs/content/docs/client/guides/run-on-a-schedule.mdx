@@ -1,0 +1,28 @@
+---
+title: Run something on a schedule
+description: A job on an interval or a cron expression, started with the bot.
+---
+
+Every six hours the bot floods an advert, so the mesh keeps a route to it. Every evening at eight it posts
+how many nodes it heard.
+
+<include lang="ts" meta='title="jobs/advert.ts"'>../../../../snippets/client/guides/run-on-a-schedule.ts#advert</include>
+
+<include lang="ts" meta='title="jobs/evening-report.ts"'>../../../../snippets/client/guides/run-on-a-schedule.ts#evening</include>
+
+## What happens
+
+A job takes either `setInterval(seconds)` or `setCron(expression, { timezone })`. Files under `jobs/` are
+loaded at login. Jobs start when the bot becomes ready and stop with `destroy()`.
+
+`setRunOnStart()` also runs the job once at startup. A scheduled run is skipped while the radio is
+disconnected.
+
+A handler that throws is reported through the `error` event and the job keeps its schedule. From a DM,
+`/jobs run|pause|resume <name>` controls it.
+
+## Go further
+
+- [Schedules and options](../jobs/schedules-and-options) for overlap, timeout and connection rules.
+- [Built-in commands](../commands/built-in-commands) for `/jobs`.
+- [JobBuilder](../reference/classes/JobBuilder) in the reference.

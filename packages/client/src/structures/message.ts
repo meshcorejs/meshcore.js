@@ -5,13 +5,16 @@ import { mentionPrefix } from '../messages/text.js';
 import type { Channel } from './channel.js';
 import type { Contact } from './contact.js';
 
+/** A channel message's author when it is not a known contact: only the name from the wire text, unverified. */
 export interface UnverifiedAuthor {
   readonly name: string;
   readonly verified: false;
 }
 
+/** Who sent a `Message`: a known `Contact`, or an `UnverifiedAuthor` for an unrecognised channel sender. */
 export type Author = Contact | UnverifiedAuthor;
 
+/** Fields a `Message` is built from. */
 export interface MessageData {
   content: string;
   senderTimestamp: number;
@@ -22,6 +25,7 @@ export interface MessageData {
   channel: Channel | null;
 }
 
+/** A direct or channel message received from the radio, with `reply()` to answer it. */
 export class Message {
   readonly client: Client;
   readonly content: string;

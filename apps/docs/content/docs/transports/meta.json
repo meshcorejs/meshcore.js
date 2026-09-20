@@ -1,0 +1,6 @@
+{
+  "title": "@meshcorejs/transports",
+  "description": "TCP, serial, BLE and the fake radio",
+  "root": true,
+  "pages": ["index", "---Reference---", "reference"]
+}

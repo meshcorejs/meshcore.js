@@ -2,8 +2,10 @@ import type { Role } from '../permissions/role.js';
 import type { Channel } from '../structures/channel.js';
 import type { Contact } from '../structures/contact.js';
 
+/** Kinds of command argument a `CommandBuilder.addArg()` chain can declare. */
 export type ArgType = 'string' | 'integer' | 'number' | 'boolean' | 'choice' | 'contact' | 'channel' | 'role';
 
+/** The parsed TypeScript type for an argument of a given `ArgType` (and its `choice` union `C`). */
 export type ArgValue<T extends ArgType, C extends string = string> = T extends 'string'
   ? string
   : T extends 'integer' | 'number'
@@ -20,6 +22,7 @@ export type ArgValue<T extends ArgType, C extends string = string> = T extends '
               ? Role
               : never;
 
+/** Built definition of one command argument, produced by `ArgBuilder.build()`. */
 export interface ArgDefinition {
   type: ArgType;
   name: string;
@@ -38,6 +41,7 @@ export interface ArgDefinition {
 
 export const ARG_NAME_PATTERN = /^[a-z0-9_]{1,32}$/;
 
+/** Declares one command argument: chain `setName`, `setDescription`, type-specific setters, then `build()`. */
 export class ArgBuilder<
   T extends ArgType,
   N extends string = string,

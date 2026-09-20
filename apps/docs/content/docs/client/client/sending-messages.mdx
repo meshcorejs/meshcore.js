@@ -1,0 +1,62 @@
+---
+title: Sending messages
+description: Byte budgets, MessageBuilder, the send queue and delivery status.
+---
+
+## Budgets in bytes
+
+<Callout type="warn">
+A radio message carries 160 UTF-8 bytes. A DM has a budget of 158 bytes. A channel message has 160 minus the
+bytes of `<bot name>: `, and minus the `@[author] ` mention when replying with one. A plain string over
+budget throws `MessageTooLongError`. The library never truncates on its own.
+</Callout>
+
+## Ways to send
+
+`contact.send()`, `channel.send()`, `message.reply()` and `ctx.reply()` all accept a string or a
+`MessageBuilder` and resolve to a `SentMessage` once queued.
+
+<include lang="ts" meta='title="main.ts"'>../../../../snippets/client/sending.ts#send</include>
+
+## MessageBuilder
+
+Builds a text that fits the budget from a title, lines, fields and a footer.
+
+| Method                             | Effect                                                                     |
+| ---------------------------------- | -------------------------------------------------------------------------- |
+| `setTitle(text)`                   | First line.                                                                |
+| `addLine(text)`, `addLines(texts)` | One line each.                                                             |
+| `addField(name, value)`            | Rendered as `name: value`, several to a line when they fit.               |
+| `setFooter(text)`                  | Last line.                                                                 |
+| `setOverflow(mode, { maxParts })`  | `error` throws (default), `truncate` cuts to an ellipsis, `split` numbers up to `maxParts` parts (default 3). |
+| `measure(budget)`                  | Bytes, limit and part count without sending. Defaults to the DM budget.    |
+| `build(budget)`                    | The parts that would be sent.                                              |
+
+Splitting never cuts inside a code point or an emoji sequence.
+
+<include lang="ts" meta='title="main.ts"'>../../../../snippets/client/sending.ts#builder</include>
+
+## The send queue
+
+`client.sendQueue` is the only path to the air. It paces transmissions 2 seconds apart and keeps the parts
+of one message together. For a DM it waits for the radio's acknowledgement before moving on, with up to 3
+resends, then a path reset and one flood retry, then the message fails. A channel send resolves as soon as
+it is transmitted, since channels have no acknowledgement. A part still queued after 5 minutes is dropped
+and the message fails.
+
+## Delivery status
+
+`SentMessage.status` is `queued`, `sent`, `delivered` or `failed`. `delivered()` resolves once every
+part is confirmed, or sent on a channel. The client also emits `messageDelivered` and `messageFailed`.
+
+<include lang="ts" meta='title="main.ts"'>../../../../snippets/client/sending.ts#delivery</include>
+
+## Reference
+
+- [MessageBuilder](../reference/classes/MessageBuilder)
+- [SentMessage](../reference/classes/SentMessage)
+- [SendQueue](../reference/classes/SendQueue)
+- [MessageTooLongError](../reference/classes/MessageTooLongError)
+- [DeliveryFailedError](../reference/classes/DeliveryFailedError)
+- [DM_TEXT_BUDGET](../reference/variables/DM_TEXT_BUDGET)
+- [channelTextBudget](../reference/functions/channelTextBudget)

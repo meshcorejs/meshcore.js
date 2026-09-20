@@ -27,6 +27,12 @@ pnpm knip           # unused exports and dependencies
 CI runs the same commands on Node 22 and 24, plus CodeQL, gitleaks and Plumber. `main` is protected: every
 change goes through a pull request with a green CI.
 
+## Documentation
+
+The site lives in `apps/docs` (Fumadocs). Guides are MDX files under `apps/docs/content/docs/<package>/`; the API
+reference is generated from the sources' doc-comments, so a new public export needs a doc-comment. Preview with
+`pnpm --filter @meshcorejs/docs dev`.
+
 ## Changesets
 
 A change to a published package needs a changeset: run `pnpm changeset`, pick the packages and the bump

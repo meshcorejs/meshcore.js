@@ -1,0 +1,29 @@
+---
+title: Handlers and isolation
+description: EventBuilder, typed handlers, registration order and error isolation.
+---
+
+An `EventBuilder` picks one of the client's events with `setEvent()`. The name is checked against
+`ClientEvents`, so the handler's extra arguments are typed to match. A `contactAdd` handler receives a
+`Contact`, a `messageCreate` handler a `Message`.
+
+<include lang="ts" meta='title="events/ready.ts"'>../../../../snippets/client/events.ts#handler</include>
+
+`setOnce()` runs the handler once and removes it. Without it the handler keeps running.
+
+An event is a file under `events/` with the builder as default export, loaded at login like any brick.
+
+## Order and isolation
+
+Handlers of the same event run in registration order. One that throws or rejects is reported through the
+`error` event with `source.type` set to `event` and `source.name` set to the event's name. The others
+still run.
+
+<include lang="ts" meta='title="events/welcome.ts, events/log.ts"'>../../../../snippets/client/events.ts#isolation</include>
+
+<include lang="ts" meta='title="main.ts"'>../../../../snippets/client/events.ts#errors</include>
+
+## Reference
+
+- [EventBuilder](../reference/classes/EventBuilder)
+- [EventManager](../reference/classes/EventManager)

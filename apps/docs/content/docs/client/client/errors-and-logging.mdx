@@ -1,0 +1,42 @@
+---
+title: Errors and logging
+description: What throws, what is reported, and the error codes.
+---
+
+Only `login()`, `load()` and the plugin methods `load()`, `unload()` and `reload()` throw. Everywhere
+else a failure is reported instead of thrown.
+
+- A command handler that throws emits `commandError` and answers on the air with
+  `client.replies.internalError`.
+- An event or job handler that throws emits `error` with `source.type` set to `event` or `job`.
+- Without an `error` listener, the client logs the failure through `client.logger` instead of crashing.
+
+<include lang="ts" meta='title="main.ts"'>../../../../snippets/client/client.ts#events</include>
+
+`source.type` is `command`, `event`, `job`, `plugin` or `internal`. `source.name` is the brick's
+name when it has one.
+
+## Error codes
+
+Every error the library throws is a `MeshcoreError` with a stable `code`.
+
+| Class                      | `code`                  |
+| -------------------------- | ----------------------- |
+| `ClientStateError`         | `INVALID_STATE`         |
+| `ConnectionError`          | `CONNECTION_FAILED`     |
+| `UnsupportedFirmwareError` | `UNSUPPORTED_FIRMWARE`  |
+| `CommandTimeoutError`      | `COMMAND_TIMEOUT`       |
+| `RadioError`               | `RADIO_ERROR`           |
+| `RadioConfigError`         | `RADIO_CONFIG_REJECTED` |
+| `LimitReachedError`        | `LIMIT_REACHED`         |
+| `MessageTooLongError`      | `MESSAGE_TOO_LONG`      |
+| `DeliveryFailedError`      | `DELIVERY_FAILED`       |
+| `LoadError`                | `LOAD_FAILED`           |
+| `JobTimeoutError`          | `JOB_TIMEOUT`           |
+| `MissingDependencyError`   | `MISSING_DEPENDENCY`    |
+
+## Reference
+
+- [MeshcoreError](../reference/classes/MeshcoreError)
+- [ErrorSource](../reference/interfaces/ErrorSource)
+- [Logger](../reference/interfaces/Logger)

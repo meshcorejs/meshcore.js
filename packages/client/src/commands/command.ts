@@ -3,15 +3,20 @@ import type { ArgDefinition } from './args.js';
 import type { CommandContext } from './context.js';
 import type { ArgumentError } from './parse-args.js';
 
+/** Where a command may be triggered: direct message, channel, or both. */
 export type CommandScope = 'dm' | 'channel';
 
+/** `CommandBuilder.setHandler()`'s callback, run once trigger, scope, permissions and cooldown pass. */
 // biome-ignore lint/suspicious/noExplicitAny: handlers are type-erased
 export type CommandHandler = (ctx: CommandContext<any>) => unknown;
+/** `CommandBuilder.setUsageErrorHandler()`'s callback, run when argument parsing fails. */
 // biome-ignore lint/suspicious/noExplicitAny: handlers are type-erased
 export type UsageErrorHandler = (ctx: CommandContext<any>, error: ArgumentError) => string | MessageBuilder;
+/** `CommandBuilder.setErrorHandler()`'s callback, run when the handler throws. */
 // biome-ignore lint/suspicious/noExplicitAny: handlers are type-erased
 export type CommandErrorHandler = (ctx: CommandContext<any>, error: unknown) => string | MessageBuilder;
 
+/** Built definition of a command, produced by `CommandBuilder.build()`. */
 export interface CommandDefinition {
   name: string;
   description: string;
@@ -27,6 +32,7 @@ export interface CommandDefinition {
   core: boolean;
 }
 
+/** A registered command's definition, exposed for the built-in helper and for introspection. */
 export class Command {
   readonly name: string;
   readonly description: string;

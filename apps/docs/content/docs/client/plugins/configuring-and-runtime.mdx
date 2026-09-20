@@ -1,0 +1,35 @@
+---
+title: Configuring and runtime
+description: configure(), registration, load, unload and reload, and how failures are reported.
+---
+
+## Configuring
+
+`PluginBuilder<Options>` is exported unconfigured. `configure(options)` returns a copy carrying the
+options, so the original export stays reusable. Nothing runs when `configure()` is called. The factory sees
+the options at load time.
+
+`weather-bot` shares one `WeatherService` between the plugin and the rest of the bot by passing it through
+the options.
+
+<include lang="ts" meta='title="weather.ts"'>../../../../../../examples/weather-bot/src/weather.ts</include>
+
+<include lang="ts" meta='title="plugins/weather.ts"'>../../../../../../examples/weather-bot/src/plugins/weather.ts</include>
+
+## Runtime
+
+<include lang="ts" meta='title="main.ts"'>../../../../snippets/client/plugins.ts#runtime</include>
+
+Plugins found under `plugins/` are `pending` until `login()` loads them, before connecting and emitting
+`ready`. After `ready`, a file added to a watched folder or a `client.register()` call loads a new plugin at
+once. A failure is reported
+through `error` with `source.type` set to `plugin` and the plugin stays unloaded.
+
+`reload()` rebuilds the bricks. On failure it puts the previous ones back, so the plugin keeps running with
+its old bricks. From a DM, `/plugins load|unload|reload <name>` does the same.
+
+## Reference
+
+- [Plugin](../reference/classes/Plugin)
+- [PluginManager](../reference/classes/PluginManager)
+- [PluginState](../reference/type-aliases/PluginState)

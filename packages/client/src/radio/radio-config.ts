@@ -10,8 +10,10 @@ import {
   sameParams,
 } from './radio-settings.js';
 
+/** Which declared field of a `RadioConfig` differs from what the radio reports, per `diff()`. */
 export type RadioSetting = 'name' | 'location' | 'txPower' | 'params';
 
+/** Fields for `RadioConfig`; every field is optional and, once declared, validated and frozen. */
 export interface RadioConfigOptions {
   name?: string | undefined;
   location?: Location | undefined;
@@ -19,6 +21,10 @@ export interface RadioConfigOptions {
   params?: RadioParams | undefined;
 }
 
+/**
+ * Desired radio settings applied at `login()`: only declared fields are touched, only when they differ from
+ * `client.self`. Validated and frozen at construction.
+ */
 export class RadioConfig {
   readonly name?: string;
   readonly location?: Readonly<Location>;

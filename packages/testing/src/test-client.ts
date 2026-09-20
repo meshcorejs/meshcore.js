@@ -12,6 +12,7 @@ import { FakeRadio, type FakeRadioOptions, fakeContactRecord, MockTransport } fr
 import { type Clock, withGlobal } from '@sinonjs/fake-timers';
 import { parseDuration } from './duration.js';
 
+/** How to set up a test bot: bricks to `load`, the radio's self info, the starting date, channel count, `RadioConfig`, replies, and the rest of the `FakeRadio` options. */
 export interface TestClientOptions {
   load?: string | URL;
   self?: Partial<SelfInfo>;
@@ -22,6 +23,7 @@ export interface TestClientOptions {
   fakeRadio?: Omit<FakeRadioOptions, 'self' | 'clock'>;
 }
 
+/** A logged-in bot on a fake radio with simulated time: send it DMs and channel messages, read what it put on the air, advance the clock, and destroy it. */
 export interface TestBot {
   readonly client: Client;
   readonly radio: FakeRadio;
@@ -65,7 +67,10 @@ export interface TestBot {
 const IDLE_STEP_MS = 100;
 const IDLE_MAX_MS = 5 * 60_000;
 
-/** @param options load, self, now, maxChannels, radio, replies and fakeRadio */
+/**
+ * Start a `Client` on a `FakeRadio` through a `MockTransport`, with `@sinonjs/fake-timers` installed, and log it in. Call `destroy()` when the test ends.
+ * @param options load, self, now, maxChannels, radio, replies and fakeRadio
+ */
 export async function createTestClient(options: TestClientOptions = {}): Promise<TestBot> {
   const clock = withGlobal(globalThis).install({
     now: options.now === undefined ? Date.now() : new Date(options.now),

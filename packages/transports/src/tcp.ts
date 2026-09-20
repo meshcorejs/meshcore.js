@@ -4,12 +4,14 @@ import { ConnectionError } from './errors.js';
 import type { Transport, TransportEvents } from './transport.js';
 import { TypedEmitter } from './typed-emitter.js';
 
+/** The radio's host, its port (default 5000) and the connect timeout. */
 export interface TcpTransportOptions {
   host: string;
   port?: number;
   connectTimeoutMs?: number;
 }
 
+/** Transport over WiFi (TCP) with the `'<'` / `'>'` framing. Needs nothing installed. */
 export class TcpTransport extends TypedEmitter<TransportEvents> implements Transport {
   readonly kind = 'tcp';
   readonly host: string;

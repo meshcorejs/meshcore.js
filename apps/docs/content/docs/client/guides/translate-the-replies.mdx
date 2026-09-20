@@ -1,0 +1,26 @@
+---
+title: Translate the replies
+description: Every text the bot says on its own, in French or in your own words.
+---
+
+The bot refuses a command, asks for a DM, lists the plugins. All these texts are English by default and
+come from one place.
+
+<include lang="ts" meta='title="main.ts"'>../../../../snippets/client/guides/translate-the-replies.ts#french</include>
+
+<include lang="ts" meta='title="main.ts"'>../../../../snippets/client/guides/translate-the-replies.ts#partial</include>
+
+## What happens
+
+`replies` takes a partial object. Only the keys you give replace the default. `frenchReplies` is a
+complete set, so spreading it first and overriding after works too.
+
+Function entries keep their parameters, like `cooldown(seconds)`.
+
+Command names stay English. `help`, `plugins`, `jobs` and their actions are not translated.
+
+## Go further
+
+- [Overriding texts](../replies/overriding-texts) for the rules.
+- [All replies](../replies/all-replies) for every key and its default.
+- [Replies](../reference/interfaces/Replies) in the reference.

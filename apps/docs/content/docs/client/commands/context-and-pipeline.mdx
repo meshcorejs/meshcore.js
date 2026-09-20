@@ -1,0 +1,45 @@
+---
+title: Context and pipeline
+description: What a handler receives, what runs before it, and what happens when it throws.
+---
+
+## The context
+
+The handler receives a `CommandContext`.
+
+| Member                      | Role                                                                    |
+| --------------------------- | ----------------------------------------------------------------------- |
+| `ctx.message`               | The triggering `Message`.                                               |
+| `ctx.author`                | Its author.                                                             |
+| `ctx.args`                  | The parsed arguments, typed from the builder.                           |
+| `ctx.reply(content)`        | Answers where the command was triggered. Takes a string or a `MessageBuilder`. |
+| `ctx.replyDM(content)`      | Answers in a DM. Rejects when a channel author cannot be verified.      |
+| `ctx.can(permission)`       | Whether the author holds a permission.                                  |
+| `ctx.canManageRole(role)`   | Whether the author ranks above that role.                               |
+| `ctx.canManageContact(c)`   | Whether the author ranks above that contact.                            |
+
+## The pipeline
+
+Every message that matches the trigger rule goes through these steps in order.
+
+1. Trigger. Does it match a registered name or alias?
+2. Scope. Is the command allowed in this DM or channel?
+3. Age. Is a backlog message too old?
+4. Permissions. Does the author hold every required permission?
+5. Cooldown. Did the author run this command too recently?
+6. Arguments. Do the values match the declaration?
+7. Handler.
+
+Every refusal emits `commandDenied` with a typed `DenyReason`. Scope and age refusals are silent. The
+others answer with a text from `client.replies`.
+
+## When the handler throws
+
+The client emits `commandError` and answers with `client.replies.internalError`. The error's detail never
+goes on the air. `setErrorHandler()` replaces that reply for one command.
+
+## Reference
+
+- [CommandContext](../reference/classes/CommandContext)
+- [DenyReason](../reference/type-aliases/DenyReason)
+- [DeniedContext](../reference/interfaces/DeniedContext)

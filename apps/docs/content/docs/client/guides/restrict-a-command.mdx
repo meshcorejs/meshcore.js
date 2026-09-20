@@ -1,0 +1,28 @@
+---
+title: Restrict who can run a command
+description: A role for the owners and a permission on the command.
+---
+
+Only the owners can post on the channel. Everyone else gets a polite refusal.
+
+<include lang="ts" meta='title="roles/owner.ts"'>../../../../snippets/client/guides/restrict-a-command.ts#owner</include>
+
+<include lang="ts" meta='title="commands/announce.ts"'>../../../../snippets/client/guides/restrict-a-command.ts#announce</include>
+
+## What happens
+
+The role lives under `roles/`, the command under `commands/`. A role has a priority, permissions and members. Members are public keys, or key prefixes of twelve
+characters or more. The bot never stores them. They come from your own source, here an environment
+variable.
+
+`setRequiredPermissions()` on the command is checked before the handler runs. Without the permission the
+person gets `Permission denied`.
+
+A channel author cannot be verified. A command with a required permission is refused on a channel and the
+bot asks for a DM instead.
+
+## Go further
+
+- [Model and built-in permissions](../permissions/model-and-built-in-permissions) for `Permissions.*`.
+- [Roles and members](../permissions/roles-and-members) for member sources and hierarchy.
+- [RoleBuilder](../reference/classes/RoleBuilder) in the reference.

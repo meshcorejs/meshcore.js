@@ -7,7 +7,8 @@ import { appName, siteUrl } from '@/lib/shared';
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: { default: appName, template: `%s | ${appName}` },
-  description: "Plug a LoRa radio into Node.js and write a bot the way you would with commands, events, jobs, permissions and roles.",
+  description:
+    'Plug a LoRa radio into Node.js and write a bot the way you would with commands, events, jobs, permissions and roles.',
   applicationName: appName,
   keywords: ['meshcore', 'lora', 'mesh', 'bot', 'companion radio', 'typescript', 'node.js'],
   authors: [{ name: 'Théo Lagache', url: 'https://github.com/asuniia' }],
@@ -19,12 +20,19 @@ export const metadata: Metadata = {
     type: 'website',
     siteName: appName,
     title: appName,
-    description: "Plug a LoRa radio into Node.js and write a bot the way you would with commands, events, jobs, permissions and roles.",
+    description:
+      'Plug a LoRa radio into Node.js and write a bot the way you would with commands, events, jobs, permissions and roles.',
     url: siteUrl,
     locale: 'en',
     images: '/og/image.png',
   },
-  twitter: { card: 'summary_large_image', title: appName, description: "Plug a LoRa radio into Node.js and write a bot the way you would with commands, events, jobs, permissions and roles.", images: '/og/image.png' },
+  twitter: {
+    card: 'summary_large_image',
+    title: appName,
+    description:
+      'Plug a LoRa radio into Node.js and write a bot the way you would with commands, events, jobs, permissions and roles.',
+    images: '/og/image.png',
+  },
 };
 
 const inter = Inter({

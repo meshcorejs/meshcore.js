@@ -1,7 +1,7 @@
 import { createGetUrl } from 'fumadocs-core/source';
 
 export const appName = 'meshcore.js';
-export const siteUrl = process.env.NEXT_PUBLIC_URL ?? 'https://meshcorejs.dev';
+export const siteUrl = process.env.NEXT_PUBLIC_URL ?? 'https://meshcore.js.org';
 export const docsRoute = '/docs';
 export const docsImageRoute = '/og/docs';
 export const docsContentRoute = '/llms.mdx/docs';

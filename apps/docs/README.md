@@ -1,6 +1,6 @@
 # @meshcorejs/docs
 
-The documentation site (https://meshcorejs.dev), built with [Fumadocs](https://fumadocs.dev) on Next.js.
+The documentation site (https://meshcore.js.org), built with [Fumadocs](https://fumadocs.dev) on Next.js.
 Private workspace package; see `AGENTS.md` for the layout and the rules.
 
 ```bash

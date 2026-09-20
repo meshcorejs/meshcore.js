@@ -39,7 +39,7 @@ bulletin, tests).
 
 ## Documentation
 
-Guides and the API reference on https://meshcorejs.github.io/meshcore.js.
+Guides and the API reference on https://meshcore.js.org.
 
 ## Radio settings
 

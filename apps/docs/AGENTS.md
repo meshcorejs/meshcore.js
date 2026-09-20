@@ -2,9 +2,10 @@
 
 ## Purpose
 
-The documentation site (https://meshcorejs.dev): Fumadocs on Next.js, one sidebar tab per package, guides written
+The documentation site (https://meshcore.js.org): Fumadocs on Next.js, one sidebar tab per package, guides written
 by hand and an API reference generated from the TypeScript sources by TypeDoc at every `dev` / `build`. Private
-workspace package, exported as a static site (`output: 'export'`) and deployed to GitHub Pages by `docs.yml`.
+workspace package, exported as a static site (`output: 'export'`) and deployed to GitHub Pages by `docs.yml`, served
+at the root of the custom domain `meshcore.js.org` (a [js.org](https://js.org) subdomain, no `basePath`).
 
 - Depends on: `next`, `react`, `fumadocs-*`, `typedoc` + `typedoc-plugin-markdown`, **TypeScript 6.0.x pinned here**
   (TypeDoc does not support TypeScript 7; the rest of the repo uses 7). Dev: `@meshcorejs/client` (`workspace:*`)
@@ -41,6 +42,7 @@ test/reference.test.ts   unit tests of the pure helpers (run by the root `pnpm t
 test/snippet.test.ts     unit tests of extractRegion()
 next.config.mjs          output: 'export' (static site in out/), images unoptimized; no redirects, no proxy
 public/.nojekyll         keeps GitHub Pages from ignoring the _next/ folder
+public/CNAME             meshcore.js.org, required by js.org (GitHub reads the domain from the Pages settings)
 ```
 
 ## Public API
@@ -107,8 +109,10 @@ None (website). Scripts: `pnpm --filter @meshcorejs/docs dev | build | start | r
   `staticGET`); `/docs` is a page with a `<meta http-equiv="refresh">` to `/docs/client` because a static site
   cannot redirect; `.md` content negotiation is gone, `MarkdownCopyButton` points at the static
   `/llms.mdx/docs/…/content.md`. `NEXT_PUBLIC_URL` (set in `docs.yml`) is `metadataBase` and the sitemap base;
-  it includes the `basePath`, so URLs are built by concatenation (`${siteUrl}${page.url}`), never with `new URL()`,
-  which would drop it.
+  URLs are built by concatenation (`${siteUrl}${page.url}`), never with `new URL()`, which would drop a path prefix
+  if the site ever moved under one again.
+- Custom domain: `public/CNAME` (copied to `out/`) holds `meshcore.js.org` because js.org requires it in the
+  repository; GitHub Pages ignores it for Actions deployments, the domain is set in the repository's Pages settings.
 - SEO: all site-wide metadata (description, keywords, robots, canonical `./`, Open Graph, Twitter card) lives in
   `app/layout.tsx`; docs pages override title, description and image in `generateMetadata`. Share images are
   explicit `.png` routes (`og/image.png` for the landing, `og/docs/[...slug]` for pages) rather than the

@@ -1,6 +1,6 @@
 {
   "name": "@meshcorejs/testing",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Test @meshcorejs/client bots without a radio: fake radio, simulated time, DM and channel helpers.",
   "keywords": [
     "meshcore",

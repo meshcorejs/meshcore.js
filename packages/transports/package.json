@@ -1,6 +1,6 @@
 {
   "name": "@meshcorejs/transports",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Serial, TCP and BLE transports for MeshCore Companion radios, plus an in-memory fake radio for tests.",
   "keywords": [
     "meshcore",

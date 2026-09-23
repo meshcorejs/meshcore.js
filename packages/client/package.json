@@ -1,6 +1,6 @@
 {
   "name": "@meshcorejs/client",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Build MeshCore bots: a Client with events, managers, builders, plugins and permissions.",
   "keywords": [
     "meshcore",

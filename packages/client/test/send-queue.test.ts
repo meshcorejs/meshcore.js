@@ -2,7 +2,8 @@ import { CommandCode } from '@meshcorejs/protocol';
 import { fakeContactRecord } from '@meshcorejs/transports/mock';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MessageBuilder } from '../src/builders/message-builder.js';
-import { DeliveryFailedError, MessageTooLongError } from '../src/errors.js';
+import { DeliveryFailedError, MessageTooLongError, RateLimitError } from '../src/errors.js';
+import { CHANNEL_SEND_LIMIT, CHANNEL_SEND_WINDOW_MS } from '../src/messages/send-queue.js';
 import type { SentMessage } from '../src/messages/sent-message.js';
 import { flush, setupClient } from './helpers.js';
 
@@ -167,6 +168,81 @@ describe('replies', () => {
     await vi.advanceTimersByTimeAsync(2000);
     await Promise.all(replies);
     expect(radio.sent.map((m) => m.text)).toEqual(['@[Léa] pong', 'sans mention']);
+  });
+});
+
+describe('channel rate limit', () => {
+  it('accepts 10 parts per channel per 5 minutes, then refuses without queueing', async () => {
+    const { client, radio, channel } = await setup();
+    const failed = vi.fn();
+    client.on('messageFailed', failed);
+    for (let i = 0; i < CHANNEL_SEND_LIMIT; i++) {
+      const sending = channel.send(`msg ${i}`);
+      await vi.advanceTimersByTimeAsync(2000);
+      await expect(sending).resolves.toBeDefined();
+    }
+    const refused = channel.send('one too many');
+    await expect(refused).rejects.toBeInstanceOf(RateLimitError);
+    await expect(refused).rejects.toMatchObject({
+      code: 'RATE_LIMIT',
+      resource: 'channel',
+      channel,
+      limit: CHANNEL_SEND_LIMIT,
+      windowMs: CHANNEL_SEND_WINDOW_MS,
+    });
+    expect(radio.sent).toHaveLength(CHANNEL_SEND_LIMIT);
+    expect(failed).not.toHaveBeenCalled();
+  });
+
+  it('reports when the next part frees up and accepts again after the window', async () => {
+    const { channel } = await setup();
+    for (let i = 0; i < CHANNEL_SEND_LIMIT; i++) {
+      const sending = channel.send(`msg ${i}`);
+      await vi.advanceTimersByTimeAsync(2000);
+      await sending;
+    }
+    await expect(channel.send('x')).rejects.toMatchObject({ retryAfterMs: CHANNEL_SEND_WINDOW_MS - 20_000 });
+    await vi.advanceTimersByTimeAsync(CHANNEL_SEND_WINDOW_MS - 20_000);
+    const sending = channel.send('again');
+    await vi.advanceTimersByTimeAsync(2000);
+    await expect(sending).resolves.toBeDefined();
+  });
+
+  it('counts parts and refuses a split message that does not fit whole', async () => {
+    const { channel } = await setup();
+    for (let i = 0; i < CHANNEL_SEND_LIMIT - 2; i++) {
+      const sending = channel.send(`msg ${i}`);
+      await vi.advanceTimersByTimeAsync(2000);
+      await sending;
+    }
+    const three = new MessageBuilder()
+      .addLines(Array.from({ length: 40 }, (_, i) => `ligne ${i} un peu longue pour forcer`))
+      .setOverflow('split', { maxParts: 3 });
+    await expect(channel.send(three)).rejects.toBeInstanceOf(RateLimitError);
+    const sending = channel.send('fits');
+    await vi.advanceTimersByTimeAsync(2000);
+    await expect(sending).resolves.toBeDefined();
+  });
+
+  it('keeps one budget per channel and none for DMs', async () => {
+    const { client, radio, channel, contact } = await setup({
+      channels: [lyon, { index: 2, name: '#paris', secret: new Uint8Array(16) }],
+    });
+    for (let i = 0; i < CHANNEL_SEND_LIMIT; i++) {
+      const sending = channel.send(`msg ${i}`);
+      await vi.advanceTimersByTimeAsync(2000);
+      await sending;
+    }
+    const paris = client.channels.get('#paris')!;
+    const onParis = paris.send('hello');
+    await vi.advanceTimersByTimeAsync(2000);
+    await expect(onParis).resolves.toBeDefined();
+    for (let i = 0; i < 12; i++) {
+      const sending = contact.send(`dm ${i}`);
+      await vi.advanceTimersByTimeAsync(2000);
+      await expect(sending).resolves.toBeDefined();
+    }
+    expect(radio.sent.filter((m) => m.kind === 'dm')).toHaveLength(12);
   });
 });
 

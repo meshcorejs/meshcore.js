@@ -8,13 +8,19 @@ export interface SetupOptions extends FakeRadioOptions {
   /** Call client.login() before returning. Default true. */
   login?: boolean;
   replies?: Partial<Replies>;
+  maxHops?: number;
 }
 
 export async function setupClient(options: SetupOptions = {}) {
-  const { login = true, replies, ...radioOptions } = options;
+  const { login = true, replies, maxHops, ...radioOptions } = options;
   const transport = new MockTransport();
   const radio = new FakeRadio(radioOptions).attach(transport);
-  const client = new Client({ transport, logger: silentLogger, ...(replies ? { replies } : {}) });
+  const client = new Client({
+    transport,
+    logger: silentLogger,
+    ...(replies ? { replies } : {}),
+    ...(maxHops !== undefined ? { maxHops } : {}),
+  });
   if (login) await client.login();
   return { client, radio, transport };
 }

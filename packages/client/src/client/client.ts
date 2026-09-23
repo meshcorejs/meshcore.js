@@ -18,6 +18,7 @@ import {
   LoadError,
   RadioConfigError,
   RadioError,
+  RateLimitError,
   UnsupportedFirmwareError,
 } from '../errors.js';
 import { EventManager } from '../events/event-manager.js';
@@ -37,7 +38,7 @@ import type { ClientEvents, ErrorSource } from './events.js';
 import { BrickLoader, type LoadOptions } from './loader.js';
 import { BrickRegistry } from './registry.js';
 
-/** Infrastructure for a `Client`: transport, optional radio config, replies override, logger, app name, bricks dir. */
+/** Infrastructure for a `Client`: transport, optional radio config, replies override, logger, app name, bricks dir, max hops. */
 export interface ClientOptions {
   transport: Transport;
   radio?: RadioConfig;
@@ -45,6 +46,8 @@ export interface ClientOptions {
   logger?: Logger;
   appName?: string;
   load?: string | URL;
+  /** Ignore commands and refuse `message.reply()` beyond this many hops (`Message.hopCount`). Default: no limit */
+  maxHops?: number;
 }
 
 /** Lifecycle state of a `Client`, from construction to `destroy()`. */
@@ -81,6 +84,7 @@ export class Client extends TypedEmitter<ClientEvents> {
   readonly plugins: PluginManager;
   readonly replies: Replies;
   readonly radioConfig: RadioConfig | null;
+  readonly maxHops: number | null;
   /** @internal */
   readonly registry: BrickRegistry;
   readonly #appName: string;
@@ -103,6 +107,10 @@ export class Client extends TypedEmitter<ClientEvents> {
     this.logger = options.logger ?? createConsoleLogger();
     this.#appName = options.appName ?? 'meshcore.js';
     this.replies = mergeReplies(options.replies);
+    if (options.maxHops !== undefined && (!Number.isInteger(options.maxHops) || options.maxHops < 0)) {
+      throw new RangeError(`maxHops must be an integer >= 0, got ${options.maxHops}`);
+    }
+    this.maxHops = options.maxHops ?? null;
     this.radio = new Radio(this.transport);
     this.contacts = new ContactManager(this);
     this.channels = new ChannelManager(this);
@@ -253,8 +261,13 @@ export class Client extends TypedEmitter<ClientEvents> {
     }
     this.#self = await this.radio.appStart(this.#appName);
     if (changes.includes('name') || changes.includes('location')) {
-      await this.radio.sendSelfAdvert(true);
-      this.logger.info('radio: advert sent (identity changed)');
+      try {
+        await this.radio.sendSelfAdvert(true);
+        this.logger.info('radio: advert sent (identity changed)');
+      } catch (error) {
+        if (!(error instanceof RateLimitError)) throw error;
+        this.logger.warn(`radio: flood advert skipped, ${error.message}`);
+      }
     }
   }
 

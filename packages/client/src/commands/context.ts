@@ -14,6 +14,7 @@ import type { Command } from './command.js';
 /** Why a command was refused; every refusal emits `commandDenied` with one of these. */
 export type DenyReason =
   | { type: 'unknownCommand'; name: string }
+  | { type: 'tooFar'; hopCount: number }
   | { type: 'scope' }
   | { type: 'backlog'; ageSeconds: number }
   | { type: 'channelUntrusted' }
@@ -76,7 +77,7 @@ export class CommandContext<Args extends object = Record<string, unknown>> {
    * @param options mention prefixes the author on a channel. Default true
    */
   reply(content: MessageContent, options: { mention?: boolean } = {}): Promise<SentMessage> {
-    return this.message.reply(content, options);
+    return this.message._reply(content, options, true);
   }
 
   /** @param permission Permission to check for the author */

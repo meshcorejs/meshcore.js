@@ -18,8 +18,15 @@ if the channel is missing instead of failing.
 The message goes through the send queue. Transmissions are two seconds apart and the parts of one message
 stay together.
 
+<Callout type="warn">
+A channel accepts at most **10 messages per 5 minutes**; beyond that `channel.send()` rejects with
+`RateLimitError`, nothing is queued. Sending on the **Public** channel is refused outright with
+`PublicChannelError` — see [A well-behaved bot](./a-well-behaved-bot).
+</Callout>
+
 ## Go further
 
 - [Sending messages](../client/sending-messages) for the budgets, the builder and delivery status.
 - [Restrict a command](./restrict-a-command) so only owners can announce.
+- [A well-behaved bot](./a-well-behaved-bot) for the channel rate limit and Public.
 - [MessageBuilder](../reference/classes/MessageBuilder) in the reference.

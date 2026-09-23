@@ -100,6 +100,7 @@ export class FakeRadio {
   ackMode: AckMode = 'auto';
   ackDelayMs = 50;
   unresponsive = false;
+  refuseSelfAdvert = false;
   batteryMillivolts = 4100;
   suggestedTimeoutMs: number;
   selfAdvertPacket: Uint8Array;
@@ -293,6 +294,7 @@ export class FakeRadio {
       }
 
       case CommandCode.SendSelfAdvert:
+        if (this.refuseSelfAdvert) return this.#reply(encodeErrResponse(RadioErrorCode.BadState));
         return this.#reply(encodeOkResponse());
 
       case CommandCode.AddUpdateContact: {

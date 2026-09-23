@@ -117,7 +117,7 @@ describe('commands with required permissions', () => {
   it('reproduces the French transcript of the v1 spec with frenchReplies', async () => {
     const { dm, channel } = await trainBot({ replies: frenchReplies });
     expect(await dm(marc, '/promote Léa moderateur')).toEqual(['⛔ Permission refusée']);
-    expect(await channel('Théo', '@TrainBot promote Léa admin')).toEqual(['@[Théo] ↪️ Envoie-moi cette commande en DM']);
+    expect(await channel('Théo', '@TrainBot promote Léa admin')).toEqual([]);
   });
 
   it('follows the promote / demote transcript of the spec', async () => {
@@ -140,7 +140,7 @@ describe('commands with required permissions', () => {
 
   it('refuses protected commands on channels, even for owners', async () => {
     const { channel, denied } = await trainBot();
-    expect(await channel('Théo', '@TrainBot promote Léa admin')).toEqual(['@[Théo] ↪️ Send me this command in a DM']);
+    expect(await channel('Théo', '@TrainBot promote Léa admin')).toEqual([]);
     expect(denied).toEqual([{ type: 'channelUntrusted' }]);
   });
 
@@ -150,7 +150,7 @@ describe('commands with required permissions', () => {
     expect(await dm(theo, '/help')).toEqual([
       '/train <numero>\n/alerte <texte>\n/promote <contact> <role>\n/demote <contact> <role>\n/plugins [action] [name]\n/jobs [action] [name]',
     ]);
-    expect(await channel('Théo', '@TrainBot')).toEqual(['@[Théo] @TrainBot train <numero>']);
+    expect(await channel('Théo', '@TrainBot')).toEqual(['@[Théo] Commands: train · DM me /help']);
   });
 
   it('refuses unknown permission references at login', async () => {

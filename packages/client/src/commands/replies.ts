@@ -1,10 +1,8 @@
 /** Every text the bot says on its own: refusals, usage errors, and the answers of the built-in `help`, `plugins` and `jobs` commands. Functions receive what they need to format the reply. */
 export interface Replies {
   unknownCommandDM: string;
-  unknownCommandChannel: string;
   noCommands: string;
   internalError: string;
-  channelUntrusted: string;
   missingPermissions: string;
   /** @param seconds Seconds left */
   cooldown(seconds: number): string;
@@ -22,6 +20,8 @@ export interface Replies {
   tooManyArguments(usage: string): string;
   /** @param usage Command usage line */
   usage(usage: string): string;
+  /** One-line helper on a channel: the command names usable there. `names` is never empty. */
+  helperChannel(names: string[]): string;
   noPlugins: string;
   /**
    * @param name Plugin name
@@ -83,16 +83,15 @@ const pluginLine: Replies['pluginLine'] = (name, loaded, count) => (loaded ? `${
 /** The default replies, in English. */
 export const englishReplies: Replies = Object.freeze<Replies>({
   unknownCommandDM: '❓ Unknown command, /help',
-  unknownCommandChannel: '❓ Unknown command',
   noCommands: 'No commands available',
   internalError: '❌ Internal error',
-  channelUntrusted: '↪️ Send me this command in a DM',
   missingPermissions: '⛔ Permission denied',
   cooldown: (seconds) => `⏳ Try again in ${seconds}s`,
   invalidArgument: (name, usage) => `⚠️ ${name} is invalid\n${usage}`,
   missingArgument: (name, usage) => `⚠️ ${name} is missing\n${usage}`,
   tooManyArguments: (usage) => `⚠️ too many arguments\n${usage}`,
   usage: (usage) => `⚠️ usage\n${usage}`,
+  helperChannel: (names) => `Commands: ${names.join(', ')} · DM me /help`,
   noPlugins: 'No plugins',
   pluginLine,
   pluginLoaded: (name, count) => `✅ ${name} loaded (${count})`,
@@ -116,16 +115,15 @@ export const englishReplies: Replies = Object.freeze<Replies>({
 /** A complete French set of replies, to pass as `replies` to the `Client`. */
 export const frenchReplies: Replies = Object.freeze<Replies>({
   unknownCommandDM: '❓ Commande inconnue, /help',
-  unknownCommandChannel: '❓ Commande inconnue',
   noCommands: 'Aucune commande disponible',
   internalError: '❌ Erreur interne',
-  channelUntrusted: '↪️ Envoie-moi cette commande en DM',
   missingPermissions: '⛔ Permission refusée',
   cooldown: (seconds) => `⏳ Réessaie dans ${seconds}s`,
   invalidArgument: (name, usage) => `⚠️ ${name} invalide\n${usage}`,
   missingArgument: (name, usage) => `⚠️ ${name} manquant\n${usage}`,
   tooManyArguments: (usage) => `⚠️ trop d'arguments\n${usage}`,
   usage: (usage) => `⚠️ usage\n${usage}`,
+  helperChannel: (names) => `Commandes : ${names.join(', ')} · /help en DM`,
   noPlugins: 'Aucun plugin',
   pluginLine,
   pluginLoaded: (name, count) => `✅ ${name} chargé (${count})`,

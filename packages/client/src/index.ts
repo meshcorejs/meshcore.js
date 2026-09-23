@@ -44,6 +44,7 @@ export {
   ConnectionError,
   DeliveryFailedError,
   type DeliveryFailureReason,
+  GuardedCommandError,
   JobTimeoutError,
   LimitReachedError,
   LoadError,
@@ -51,8 +52,12 @@ export {
   MeshcoreError,
   MessageTooLongError,
   MissingDependencyError,
+  PublicChannelError,
   RadioConfigError,
   RadioError,
+  RateLimitError,
+  type RateLimitedResource,
+  TooFarError,
   UnsupportedFirmwareError,
 } from './errors.js';
 export { EventBuilder, type EventDefinition, type EventName } from './events/event-builder.js';
@@ -70,6 +75,8 @@ export { createConsoleLogger, type Logger, type LogLevel, silentLogger } from '.
 export { ChannelManager, type CreateChannelOptions, hashtagChannelSecret } from './managers/channel-manager.js';
 export { type Advert, ContactManager } from './managers/contact-manager.js';
 export {
+  CHANNEL_SEND_LIMIT,
+  CHANNEL_SEND_WINDOW_MS,
   DM_MAX_RESENDS,
   type MessageContent,
   SEND_EXPIRY_MS,
@@ -104,9 +111,10 @@ export {
 export { Plugin, type PluginState } from './plugins/plugin.js';
 export { type PluginBricksFactory, PluginBuilder, type PluginDefinition } from './plugins/plugin-builder.js';
 export { PluginManager } from './plugins/plugin-manager.js';
-export { Radio, type RadioEvents, type RadioOptions } from './radio/radio.js';
+export { ADVERT_FLOOD_INTERVAL_MS, expectType, Radio, type RadioEvents, type RadioOptions } from './radio/radio.js';
 export { RadioConfig, type RadioConfigOptions, type RadioSetting } from './radio/radio-config.js';
 export type { Location, RadioParams } from './radio/radio-settings.js';
+export type { Collector } from './radio/request-queue.js';
 export { Channel } from './structures/channel.js';
 export { Contact, type ContactKind } from './structures/contact.js';
 export { type Author, Message, type MessageData, type UnverifiedAuthor } from './structures/message.js';

@@ -1,10 +1,11 @@
 import type { MessageBuilder } from '../builders/message-builder.js';
+import type { Message } from '../structures/message.js';
 import type { ArgDefinition } from './args.js';
 import type { CommandContext } from './context.js';
 import type { ArgumentError } from './parse-args.js';
 
-/** Where a command may be triggered: direct message, channel, or both. */
-export type CommandScope = 'dm' | 'channel';
+
+export type CommandScope = 'dm' | 'channel' | 'public';
 
 /** `CommandBuilder.setHandler()`'s callback, run once trigger, scope, permissions and cooldown pass. */
 // biome-ignore lint/suspicious/noExplicitAny: handlers are type-erased
@@ -60,7 +61,7 @@ export class Command {
     this.core = definition.core;
   }
 
-  /** @param scope dm or channel */
+  /** @param scope dm, channel or public */
   allows(scope: CommandScope): boolean {
     return this.scopes.includes(scope);
   }
@@ -70,4 +71,10 @@ export function formatUsage(command: Command, isDM: boolean, botName: string): s
   const args = command.args.map((arg) => (arg.required ? `<${arg.name}>` : `[${arg.name}]`));
   const head = isDM ? `/${command.name}` : `@${botName} ${command.name}`;
   return [head, ...args].join(' ');
+}
+
+/** The scope a received message falls in: `dm`, `public` (the firmware's Public channel) or `channel`. */
+export function scopeOf(message: Message): CommandScope {
+  if (message.channel === null) return 'dm';
+  return message.channel.isPublic ? 'public' : 'channel';
 }

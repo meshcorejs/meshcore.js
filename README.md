@@ -80,6 +80,17 @@ new Client({ transport, replies: frenchReplies }); // or { unknownCommandDM: 'â€
 Holders of `Permissions.ManagePlugins` / `ManageJobs` (or `Administrator`) get `/plugins [load|unload|reload <name>]`
 and `/jobs [run|pause|resume <name>]` in DM. Bots without roles expose nothing extra.
 
+## Anti-spam by default
+
+A bot built with meshcore.js cannot spam the mesh by accident:
+
+- it never speaks first on **Public**, and only answers commands you allowed there with `setScope('public')`;
+- on a channel it only speaks to answer a command it ran â€” refusals are silent;
+- at most **10 messages per 5 minutes** on one channel, **one flood advert per 30 minutes**;
+- `maxHops` bounds how far it answers.
+
+None of this is configurable; see [A well-behaved bot](https://meshcore.js.org/docs/client/guides/a-well-behaved-bot).
+
 ## Requirements
 
 - A MeshCore node running the **Companion Radio** firmware (protocol version 3 or newer).

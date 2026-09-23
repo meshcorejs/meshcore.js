@@ -5,7 +5,10 @@ describe('public API', () => {
   it('exports the core runtime values', () => {
     expect(Object.keys(meshcore).sort()).toEqual(
       [
+        'ADVERT_FLOOD_INTERVAL_MS',
         'BleTransport',
+        'CHANNEL_SEND_LIMIT',
+        'CHANNEL_SEND_WINDOW_MS',
         'Channel',
         'ChannelManager',
         'Client',
@@ -15,6 +18,7 @@ describe('public API', () => {
         'ConnectionError',
         'Contact',
         'ContactManager',
+        'GuardedCommandError',
         'HEALTH_CHECK_INTERVAL_MS',
         'HEALTH_CHECK_MAX_FAILURES',
         'LimitReachedError',
@@ -32,6 +36,7 @@ describe('public API', () => {
         'TypedEmitter',
         'UnsupportedFirmwareError',
         'createConsoleLogger',
+        'expectType',
         'hashtagChannelSecret',
         'isBrick',
         'silentLogger',
@@ -45,7 +50,10 @@ describe('public API', () => {
         'Plugin',
         'PluginBuilder',
         'PluginManager',
+        'PublicChannelError',
         'Permissions',
+        'RateLimitError',
+        'TooFarError',
         'Role',
         'RoleBuilder',
         'RoleManager',

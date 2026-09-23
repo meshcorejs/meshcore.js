@@ -1,6 +1,10 @@
 import type { DecodedFrame } from '@meshcorejs/protocol';
 import { CommandTimeoutError, RadioError } from '../errors.js';
 
+/**
+ * Decides what a request does with each response frame: `{ value }` resolves it, `'continue'` keeps waiting
+ * (multi-frame answers), `'ignore'` leaves the frame to others.
+ */
 export type Collector<T> = (frame: DecodedFrame) => { value: T } | 'continue' | 'ignore';
 
 interface PendingRequest {

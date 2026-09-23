@@ -23,15 +23,18 @@ The handler receives a `CommandContext`.
 Every message that matches the trigger rule goes through these steps in order.
 
 1. Trigger. Does it match a registered name or alias?
-2. Scope. Is the command allowed in this DM or channel?
-3. Age. Is a backlog message too old?
-4. Permissions. Does the author hold every required permission?
-5. Cooldown. Did the author run this command too recently?
-6. Arguments. Do the values match the declaration?
-7. Handler.
+2. Max hops. Is the message within `client.maxHops`, if one is set?
+3. Scope. Is the command allowed in this DM or channel?
+4. Age. Is a backlog message too old?
+5. Permissions. Does the author hold every required permission?
+6. Cooldown. Did the author run this command too recently?
+7. Arguments. Do the values match the declaration?
+8. Handler.
 
-Every refusal emits `commandDenied` with a typed `DenyReason`. Scope and age refusals are silent. The
-others answer with a text from `client.replies`.
+Every refusal emits `commandDenied` with a typed `DenyReason`. A message from beyond `maxHops` is denied
+silently with `{ type: 'tooFar', hopCount }`, before the helper branch runs — so an out-of-range `@Bot` gets
+nothing either. On a channel every refusal is silent — the bot only speaks to answer a command it actually
+ran. In a DM the others answer with a text from `client.replies`.
 
 ## When the handler throws
 

@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MessageBuilder } from '../src/builders/message-builder.js';
 import { CommandBuilder } from '../src/commands/command-builder.js';
 import type { DenyReason } from '../src/commands/context.js';
+import { RateLimitError } from '../src/errors.js';
 import { flush, setupClient } from './helpers.js';
 
 beforeEach(() => {
@@ -105,7 +106,7 @@ describe('command pipeline', () => {
     radio.receiveContactMessage({ from: julie.publicKey, text: '/trian 6607' });
     expect(await next()).toEqual(['❓ Unknown command, /help']);
     radio.receiveChannelMessage({ channelIndex: 1, senderName: 'Léa', text: '@TrainBot trian' });
-    expect(await next()).toEqual(['@[Léa] ❓ Unknown command']);
+    expect(await next()).toEqual([]);
     expect(denied).toEqual([
       { type: 'unknownCommand', name: 'trian' },
       { type: 'unknownCommand', name: 'trian' },
@@ -130,7 +131,7 @@ describe('command pipeline', () => {
     radio.receiveContactMessage({ from: julie.publicKey, text: '/train abc' });
     expect(await next()).toEqual(['⚠️ numero is invalid\n/train <numero>']);
     radio.receiveChannelMessage({ channelIndex: 1, senderName: 'Léa', text: '@TrainBot train' });
-    expect(await next()).toEqual(['@[Léa] ⚠️ numero is missing\n@TrainBot train <numero>']);
+    expect(await next()).toEqual([]);
     expect(denied.map((d) => d.type)).toEqual(['invalidArguments', 'invalidArguments']);
   });
 
@@ -213,6 +214,42 @@ describe('command pipeline', () => {
     expect(onError).toHaveBeenCalledWith(new Error('async failure'), { type: 'command', name: 'boom' });
   });
 
+  it('does not try to answer internalError when the channel is rate limited', async () => {
+    const { client, radio } = await setup();
+    const boom = new CommandBuilder().setName('boom').setHandler(async (ctx) => {
+      for (let i = 0; i < 11; i++) await ctx.reply(`part ${i}`);
+    });
+    client.register(boom);
+    await client.login();
+    const errors = vi.fn();
+    client.on('commandError', errors);
+    const next = sentTexts(radio);
+    radio.receiveChannelMessage({ channelIndex: 1, senderName: 'Léa', text: '@TrainBot boom' });
+    await vi.advanceTimersByTimeAsync(30_000);
+    const texts = await next();
+    expect(texts).toHaveLength(10);
+    expect(texts).not.toContain('@[Léa] ❌ Internal error');
+    expect(errors).toHaveBeenCalledTimes(1);
+    expect(errors.mock.calls[0]?.[0]).toBeInstanceOf(RateLimitError);
+  });
+
+  it('still answers internalError when a handler leaks an advert rate limit, unrelated to the channel budget', async () => {
+    const { client, radio } = await setup();
+    const boom = new CommandBuilder().setName('boom').setHandler(async () => {
+      throw new RateLimitError('advert', null, 1, 1_800_000, 1000);
+    });
+    client.register(boom);
+    await client.login();
+    const errors = vi.fn();
+    client.on('commandError', errors);
+    const next = sentTexts(radio);
+    radio.receiveChannelMessage({ channelIndex: 1, senderName: 'Léa', text: '@TrainBot boom' });
+    const texts = await next();
+    expect(texts).toEqual(['@[Léa] ❌ Internal error']);
+    expect(errors).toHaveBeenCalledTimes(1);
+    expect(errors.mock.calls[0]?.[0]).toBeInstanceOf(RateLimitError);
+  });
+
   it('refuses to log in with colliding names and aliases', async () => {
     const { client } = await setup();
     client.register([train, new CommandBuilder().setName('t').setHandler(() => {})]);
@@ -238,7 +275,7 @@ describe('built-in helper', () => {
     await client.login();
     const next = sentTexts(radio);
     radio.receiveChannelMessage({ channelIndex: 1, senderName: 'Léa', text: '@TrainBot' });
-    expect(await next()).toEqual(['@[Léa] @TrainBot train <numero>']);
+    expect(await next()).toEqual(['@[Léa] Commands: train · DM me /help']);
   });
 
   it('says when nothing is available and splits long lists', async () => {

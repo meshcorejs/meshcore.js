@@ -19,6 +19,7 @@ describe('public API', () => {
         'MIN_FIRMWARE_VERSION',
         'NAME_FIELD_SIZE',
         'OUT_PATH_UNKNOWN',
+        'PUBLIC_CHANNEL_SECRET',
         'PUB_KEY_PREFIX_SIZE',
         'PUB_KEY_SIZE',
         'PushCode',

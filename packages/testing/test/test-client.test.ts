@@ -1,4 +1,5 @@
 import { frenchReplies, RadioConfig } from '@meshcorejs/client';
+import { PUBLIC_CHANNEL_SECRET } from '@meshcorejs/protocol';
 import { afterEach, describe, expect, it } from 'vitest';
 import { createTestClient, fakeContactKey, parseDuration, type TestBot } from '../src/index.js';
 
@@ -40,7 +41,7 @@ describe('createTestClient', () => {
 
   it('returns channel replies and creates the channel on demand', async () => {
     const b = await bot();
-    expect(await b.channel('#lyon', 'Léa', '@TrainBot')).toEqual(['@[Léa] @TrainBot slow']);
+    expect(await b.channel('#lyon', 'Léa', '@TrainBot')).toEqual(['@[Léa] Commands: info, slow · DM me /help']);
     expect(b.client.channels.get('#lyon')).toBeDefined();
   });
 
@@ -90,5 +91,15 @@ describe('createTestClient', () => {
   it('forwards replies to the client', async () => {
     const b = await bot({ replies: frenchReplies });
     expect(await b.dm(b.fakeContact('Léa'), '/secret')).toEqual(['⛔ Permission refusée']);
+  });
+});
+
+describe('anti-spam rules, seen from a bot test', () => {
+  it('ignores default commands on Public and answers opted-in ones', async () => {
+    const b = await bot();
+    b.fakeChannel('Public', PUBLIC_CHANNEL_SECRET);
+    expect(await b.channel('Public', 'Léa', '@TrainBot slow')).toEqual([]);
+    expect(await b.channel('Public', 'Léa', '@TrainBot info')).toEqual(['@[Léa] TrainBot · /help in DM']);
+    expect(await b.channel('Public', 'Léa', '@TrainBot nope')).toEqual([]);
   });
 });

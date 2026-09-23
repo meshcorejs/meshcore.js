@@ -96,6 +96,13 @@ export const MAX_TEXT_LEN = 160;
 export const NAME_FIELD_SIZE = 32;
 /** A channel secret, in bytes. */
 export const CHANNEL_SECRET_SIZE = 16;
+/**
+ * Secret of the "Public" channel every Companion radio ships with (`PUBLIC_GROUP_PSK` in the firmware's
+ * `examples/companion_radio/MyMesh.cpp`). Identify Public by this secret, never by its name.
+ */
+export const PUBLIC_CHANNEL_SECRET: Uint8Array = Uint8Array.from([
+  0x8b, 0x33, 0x87, 0xe9, 0xc5, 0xcd, 0xea, 0x6a, 0xc9, 0xe5, 0xed, 0xba, 0xa1, 0x15, 0xcd, 0x72,
+]);
 /** The `pathLen` meaning the route to a contact is unknown. */
 export const OUT_PATH_UNKNOWN = 0xff;
 /** The Companion protocol version this codec speaks. */

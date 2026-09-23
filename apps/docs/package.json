@@ -20,7 +20,7 @@
     "fumadocs-mdx": "15.4.1",
     "fumadocs-ui": "npm:@fumadocs/base-ui@16.15.11",
     "lucide-react": "^1.43.0",
-    "next": "16.3.4",
+    "next": "16.3.5",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },
@@ -32,7 +32,7 @@
     "@meshcorejs/transports": "workspace:*",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/mdx": "^2.0.14",
-    "@types/node": "^22.20.3",
+    "@types/node": "^26.6.1",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "postcss": "^8.5.28",

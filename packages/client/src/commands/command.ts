@@ -4,7 +4,10 @@ import type { ArgDefinition } from './args.js';
 import type { CommandContext } from './context.js';
 import type { ArgumentError } from './parse-args.js';
 
-
+/**
+ * Where a command may be triggered: a direct message, a channel other than Public, or the Public channel.
+ * Public is never included by default — a command must opt in with `setScope('public')`.
+ */
 export type CommandScope = 'dm' | 'channel' | 'public';
 
 /** `CommandBuilder.setHandler()`'s callback, run once trigger, scope, permissions and cooldown pass. */

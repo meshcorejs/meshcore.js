@@ -1,11 +1,14 @@
+import { utf8ByteLength } from '@meshcorejs/protocol';
 import { MessageBuilder } from '../builders/message-builder.js';
 import type { Client } from '../client/client.js';
 import { Collection } from '../collection.js';
-import type { LoadIssue } from '../errors.js';
+import { type LoadIssue, RateLimitError } from '../errors.js';
 import type { MessageContent } from '../messages/send-queue.js';
+import { mentionPrefix } from '../messages/text.js';
 import type { Permission } from '../permissions/permission-manager.js';
+import type { Channel } from '../structures/channel.js';
 import type { Message } from '../structures/message.js';
-import { Command, type CommandDefinition, formatUsage } from './command.js';
+import { Command, type CommandDefinition, formatUsage, scopeOf } from './command.js';
 import { CommandContext, type DeniedContext, type DenyReason } from './context.js';
 import { ArgumentError, parseArgs } from './parse-args.js';
 import { parseTrigger } from './trigger.js';
@@ -99,6 +102,10 @@ export class CommandManager {
   async handle(message: Message): Promise<void> {
     const trigger = parseTrigger(message.content, message.isDM, this.client.self.name);
     if (!trigger) return;
+    if (message.tooFar) {
+      await this.#deny(message, null, { type: 'tooFar', hopCount: message.hopCount as number });
+      return;
+    }
     if (trigger.type === 'helper') {
       await this.#sendHelper(message);
       return;
@@ -110,11 +117,11 @@ export class CommandManager {
         message,
         null,
         { type: 'unknownCommand', name: trigger.name },
-        message.isDM ? this.client.replies.unknownCommandDM : this.client.replies.unknownCommandChannel,
+        this.client.replies.unknownCommandDM,
       );
       return;
     }
-    if (!command.allows(message.isDM ? 'dm' : 'channel')) {
+    if (!command.allows(scopeOf(message))) {
       await this.#deny(message, command, { type: 'scope' });
       return;
     }
@@ -126,7 +133,7 @@ export class CommandManager {
 
     if (command.requiredPermissions.length > 0) {
       if (!message.isDM) {
-        await this.#deny(message, command, { type: 'channelUntrusted' }, this.client.replies.channelUntrusted);
+        await this.#deny(message, command, { type: 'channelUntrusted' });
         return;
       }
       let missing: Permission[];
@@ -188,14 +195,18 @@ export class CommandManager {
       if (this.client.listenerCount('commandError') > 0)
         this.client.emit('commandError', error instanceof Error ? error : new Error(String(error)), ctx);
       else this.client._reportError(error, { type: 'command', name: command.name });
+      if (error instanceof RateLimitError && error.resource === 'channel') {
+        this.client.logger.warn(`command ${command.name}: ${error.message}`);
+        return;
+      }
       const reply = command.definition.errorHandler?.(ctx, error) ?? this.client.replies.internalError;
       await this.#safeReply(message, reply);
     }
   }
 
   async #sendHelper(message: Message): Promise<void> {
-    const scope = message.isDM ? 'dm' : 'channel';
-    const lines: string[] = [];
+    const scope = scopeOf(message);
+    const usable: Command[] = [];
     for (const command of this.cache.values()) {
       if (!command.allows(scope)) continue;
       if (command.requiredPermissions.length > 0) {
@@ -203,13 +214,42 @@ export class CommandManager {
         const missing = await this.client.permissions.missing(message.author, [...command.requiredPermissions]);
         if (missing.length > 0) continue;
       }
-      lines.push(formatUsage(command, message.isDM, this.client.self.name));
+      usable.push(command);
     }
-    const reply =
-      lines.length === 0
-        ? this.client.replies.noCommands
-        : new MessageBuilder().addLines(lines).setOverflow('split', { maxParts: HELPER_MAX_PARTS });
-    await this.#safeReply(message, reply);
+    if (message.isDM) {
+      const lines = usable.map((command) => formatUsage(command, true, this.client.self.name));
+      const reply =
+        lines.length === 0
+          ? this.client.replies.noCommands
+          : new MessageBuilder().addLines(lines).setOverflow('split', { maxParts: HELPER_MAX_PARTS });
+      await this.#safeReply(message, reply);
+      return;
+    }
+    if (usable.length === 0) {
+      if (scope !== 'public') await this.#safeReply(message, this.client.replies.noCommands);
+      return;
+    }
+    await this.#safeReply(
+      message,
+      this.#channelHelperLine(
+        message,
+        usable.map((c) => c.name),
+      ),
+    );
+  }
+
+  /** One line that fits the channel budget: drops names from the end and marks the cut with `…`. */
+  #channelHelperLine(message: Message, names: string[]): string {
+    const channel = message.channel as Channel;
+    const prefix = message.author.name === '' ? '' : mentionPrefix(message.author.name);
+    const budget = this.client.sendQueue.budgetFor(channel, prefix);
+    let shown = names.length;
+    let line = this.client.replies.helperChannel(names);
+    while (utf8ByteLength(line) > budget && shown > 1) {
+      shown--;
+      line = this.client.replies.helperChannel([...names.slice(0, shown), '…']);
+    }
+    return line;
   }
 
   async #deny(message: Message, command: Command | null, reason: DenyReason, reply?: MessageContent): Promise<void> {
@@ -222,14 +262,15 @@ export class CommandManager {
       command,
     };
     this.client.emit('commandDenied', ctx, reason);
-    if (reply !== undefined) await this.#safeReply(message, reply);
+    if (reply !== undefined && message.isDM) await this.#safeReply(message, reply);
   }
 
   async #safeReply(message: Message, content: MessageContent): Promise<void> {
     try {
-      await message.reply(content);
+      await message._reply(content, {}, true);
     } catch (error) {
-      this.client._reportError(error, { type: 'internal', name: 'commands' });
+      if (error instanceof RateLimitError) this.client.logger.warn(`commands: ${error.message}`);
+      else this.client._reportError(error, { type: 'internal', name: 'commands' });
     }
   }
 }

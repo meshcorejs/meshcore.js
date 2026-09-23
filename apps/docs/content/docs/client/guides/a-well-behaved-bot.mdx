@@ -1,0 +1,69 @@
+---
+title: A well-behaved bot
+description: What the framework refuses by default so your bot never spams the mesh, and the knobs you have.
+---
+
+A channel message is a **flood** packet: every repeater that hears it relays it, whether it can read the channel
+or not. Each reply your bot sends on a channel costs airtime to the whole mesh, and Public is the one channel
+everybody listens to. meshcore.js enforces five rules so a bot cannot spam by accident.
+
+## The five rules
+
+1. **A bot never speaks first on Public**, and only answers the commands you explicitly allowed there, one by
+   one, with `setScope('public')`. `channel.send()` and `message.reply()` on Public reject with `PublicChannelError`.
+2. **On a channel, the bot only speaks to answer a command it ran.** Unknown command, cooldown, missing
+   permission, bad argument: silent (you still get `commandDenied`). In DM, refusals are answered as before.
+3. **At most 10 messages per 5 minutes on one channel.** Beyond that `channel.send()` / `ctx.reply()` reject with
+   `RateLimitError` — nothing is queued. DMs are not limited: they are routed, acknowledged and already bounded.
+4. **One flood advert per 30 minutes** (`client.radio.sendSelfAdvert(true)`). Zero-hop adverts are free.
+5. **You can bound how far your bot answers**: `new Client({ maxHops: 2 })` ignores commands and refuses
+   `message.reply()` beyond two hops (`Message.hopCount`, `Message.tooFar`).
+
+These limits stop accidental spam (a runaway job, refusals in a loop, restarts) and remove every easy path.
+They do not stop a determined actor: the code is open and a raw frame can be hand-built. Nothing in the API
+justifies going around them — if you need a Companion command the library does not wrap, use
+`client.radio.request()`, never write to `client.transport` yourself.
+
+## Answer on Public, deliberately
+
+```ts
+import { CommandBuilder } from '@meshcorejs/client';
+
+export default new CommandBuilder()
+  .setName('info')
+  .setDescription('What this bot does')
+  .setScope('public') // Public only; add 'dm', 'channel' for more
+  .setHandler((ctx) => ctx.reply('WeatherBot · DM me /help'));
+```
+
+`@Bot` alone on Public lists only the commands that allow `'public'`; with none, the bot stays silent.
+
+## Prefer DMs for personal answers
+
+A DM to a known contact is routed, not flooded. When the answer only concerns the author, use `ctx.replyDM()`
+(the author must be a contact) and keep the channel reply to one short line — or none.
+
+## Live on a regional channel
+
+Hashtag channels derive their key from their name: anyone who knows `#fr-occ` can join. Put your bot's
+commands on the channel of the people it serves rather than on Public. That chooses *who reads* the bot;
+the rules above bound *what it transmits*.
+
+## What you get when a limit hits
+
+| Situation | Error / event |
+|---|---|
+| `channel.send()` or `message.reply()` on Public | `PublicChannelError` (`PUBLIC_CHANNEL`) |
+| 11th part on a channel within 5 min | `RateLimitError` (`RATE_LIMIT`, `resource: 'channel'`, `retryAfterMs`) |
+| Second flood advert within 30 min | `RateLimitError` (`resource: 'advert'`) |
+| Reply to a message beyond `maxHops` | `TooFarError` (`TOO_FAR`); command → `commandDenied` `{ type: 'tooFar' }` |
+| `radio.request()` with a transmitting command | `GuardedCommandError` (`GUARDED_COMMAND`) |
+
+A command handler that lets `RateLimitError` escape does not get the usual `internalError` reply (it would be
+refused too): the error is logged and `commandError` is emitted.
+
+## Go further
+
+- [Restrict who can run a command](./restrict-a-command) for scopes and permissions.
+- [Post on a channel](./post-on-a-channel) for the send budgets and the per-channel limit.
+- [Options and login](../client/options-and-login) for `maxHops` and the login flood advert.

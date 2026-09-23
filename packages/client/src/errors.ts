@@ -1,6 +1,7 @@
 import { RadioErrorCode } from '@meshcorejs/protocol';
 import { MeshcoreError } from '@meshcorejs/transports';
 import type { RadioSetting } from './radio/radio-config.js';
+import type { Channel } from './structures/channel.js';
 
 export { ConnectionError, MeshcoreError, MissingDependencyError } from '@meshcorejs/transports';
 
@@ -109,6 +110,97 @@ export class MessageTooLongError extends MeshcoreError {
     );
     this.bytes = bytes;
     this.limit = limit;
+  }
+}
+
+/**
+ * Thrown by `channel.send()` and `message.reply()` on the Public channel: a bot never speaks first on Public.
+ * Only `ctx.reply()` of a command that opted in with `setScope('public')` may answer there.
+ */
+export class PublicChannelError extends MeshcoreError {
+  constructor() {
+    super(
+      'PUBLIC_CHANNEL',
+      "sending on the Public channel is refused: only a command with setScope('public') can reply there",
+    );
+  }
+}
+
+/**
+ * Thrown by `client.radio.request()` for the three Companion commands that transmit on the mesh
+ * (`SendTxtMsg`, `SendChannelTxtMsg`, `SendSelfAdvert`): they only go through `SendQueue` and `sendSelfAdvert()`,
+ * which carry the anti-spam limits.
+ */
+export class GuardedCommandError extends MeshcoreError {
+  readonly commandCode: number;
+
+  /** @param commandCode The refused Companion command code */
+  constructor(commandCode: number) {
+    super(
+      'GUARDED_COMMAND',
+      `command 0x${commandCode.toString(16)} transmits on the mesh: use channel.send() / contact.send() / radio.sendSelfAdvert()`,
+    );
+    this.commandCode = commandCode;
+  }
+}
+
+/** What a `RateLimitError` protects: a channel's outbound budget, or the mesh-wide flood advert. */
+export type RateLimitedResource = 'channel' | 'advert';
+
+/**
+ * Thrown when a fixed outbound limit is reached: `CHANNEL_SEND_LIMIT` parts per `CHANNEL_SEND_WINDOW_MS` on
+ * one channel, or one flood advert per `ADVERT_FLOOD_INTERVAL_MS`. Nothing is queued: retry after `retryAfterMs`.
+ */
+export class RateLimitError extends MeshcoreError {
+  readonly resource: RateLimitedResource;
+  readonly channel: Channel | null;
+  readonly limit: number;
+  readonly windowMs: number;
+  readonly retryAfterMs: number;
+
+  /**
+   * @param resource channel or advert
+   * @param channel The channel, when resource is channel
+   * @param limit Sends allowed per window
+   * @param windowMs Sliding window
+   * @param retryAfterMs Delay before one send is allowed again
+   */
+  constructor(
+    resource: RateLimitedResource,
+    channel: Channel | null,
+    limit: number,
+    windowMs: number,
+    retryAfterMs: number,
+  ) {
+    const minutes = Math.round(windowMs / 60_000);
+    const retry = Number.isFinite(retryAfterMs) ? `retry in ${Math.ceil(retryAfterMs / 1000)} s` : 'it never fits';
+    super(
+      'RATE_LIMIT',
+      resource === 'channel'
+        ? `channel "${channel?.name ?? '?'}" already got ${limit} messages in the last ${minutes} min, ${retry}`
+        : `a flood advert was already sent in the last ${minutes} min, ${retry}`,
+    );
+    this.resource = resource;
+    this.channel = channel;
+    this.limit = limit;
+    this.windowMs = windowMs;
+    this.retryAfterMs = retryAfterMs;
+  }
+}
+
+/** Thrown by `message.reply()` when the message came from further than the client's `maxHops`. */
+export class TooFarError extends MeshcoreError {
+  readonly hopCount: number;
+  readonly maxHops: number;
+
+  /**
+   * @param hopCount Hops the message travelled
+   * @param maxHops The client's limit
+   */
+  constructor(hopCount: number, maxHops: number) {
+    super('TOO_FAR', `message came through ${hopCount} hops, the client answers up to ${maxHops}`);
+    this.hopCount = hopCount;
+    this.maxHops = maxHops;
   }
 }
 

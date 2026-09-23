@@ -1,4 +1,5 @@
 import type { Client } from '../client/client.js';
+import { TooFarError } from '../errors.js';
 import type { MessageContent } from '../messages/send-queue.js';
 import type { SentMessage } from '../messages/sent-message.js';
 import { mentionPrefix } from '../messages/text.js';
@@ -55,15 +56,28 @@ export class Message {
     return this.channel === null;
   }
 
+  /** True when the message travelled more hops than the client's `maxHops`; false without a limit or an unknown route. */
+  get tooFar(): boolean {
+    const max = this.client.maxHops;
+    return max !== null && this.hopCount !== null && this.hopCount > max;
+  }
+
   /**
    * @param content Text or MessageBuilder
    * @param options mention prefixes the author on a channel. Default true
    */
   reply(content: MessageContent, options: { mention?: boolean } = {}): Promise<SentMessage> {
+    return this._reply(content, options, false);
+  }
+
+  /** @internal The command pipeline's door: `allowPublic` lets a `'public'` command answer on Public. */
+  async _reply(content: MessageContent, options: { mention?: boolean }, allowPublic: boolean): Promise<SentMessage> {
+    if (this.tooFar) throw new TooFarError(this.hopCount as number, this.client.maxHops as number);
     if (this.channel === null) return (this.author as Contact).send(content);
     const mention = (options.mention ?? true) && this.author.name !== '';
     return this.client.sendQueue.send(this.channel, content, {
       prefix: mention ? mentionPrefix(this.author.name) : '',
+      allowPublic,
     });
   }
 }

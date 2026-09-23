@@ -20,8 +20,32 @@ loader registers it. The same plugin can be configured twice with two names.
 `/plugins reload polls` from a DM rebuilds the bricks. If the new version fails, the previous bricks keep
 running.
 
+## A Companion command without a wrapper
+
+`client.radio` only wraps the commands the library needs internally. For anything else, go through
+`client.radio.request(code, payload?, collect?)` — never write frames to `client.transport` yourself, it
+bypasses the one-request-in-flight queue. `CommandCode` is not re-exported by `@meshcorejs/client`; import it
+from `@meshcorejs/protocol`.
+
+```ts
+import { CommandCode } from '@meshcorejs/protocol';
+import { expectType } from '@meshcorejs/client';
+
+const { epochSeconds } = await client.radio.request(
+  CommandCode.GetDeviceTime,
+  undefined,
+  expectType('currentTime', (f) => f),
+);
+```
+
+The three transmitting commands the library knows (`SendTxtMsg`, `SendChannelTxtMsg`, `SendSelfAdvert`) are
+refused with `GuardedCommandError`: use `channel.send()`, `contact.send()` or `client.radio.sendSelfAdvert()`
+instead — the guarded surfaces that go through the send queue, carrying whichever limits apply (DMs aren't
+rate-limited). See [A well-behaved bot](./a-well-behaved-bot).
+
 ## Go further
 
 - [Writing one](../plugins/writing-one) for static bricks and validation.
 - [Configuring and runtime](../plugins/configuring-and-runtime) for load, unload and reload.
 - [Shipping a package](../plugins/shipping-a-package) to publish it on npm.
+- [A well-behaved bot](./a-well-behaved-bot) for the guarded commands and the anti-spam limits.

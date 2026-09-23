@@ -127,7 +127,7 @@ export class CommandBuilder<Args extends object = {}> implements Brick<CommandDe
     return this.#addArg('channel', configure);
   }
 
-  /** @param scopes dm, channel or both. Default both */
+  /** @param scopes dm, channel and/or public. Default dm and channel; public must be opted in explicitly */
   setScope(...scopes: CommandScope[]): this {
     this.#scopes = [...new Set(scopes)];
     return this;

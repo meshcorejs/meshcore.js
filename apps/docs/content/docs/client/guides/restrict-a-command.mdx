@@ -18,11 +18,21 @@ variable.
 `setRequiredPermissions()` on the command is checked before the handler runs. Without the permission the
 person gets `Permission denied`.
 
-A channel author cannot be verified. A command with a required permission is refused on a channel and the
-bot asks for a DM instead.
+A channel author cannot be verified. A command with a required permission is refused on a channel, silently —
+no reply on the air, only `commandDenied` with `channelUntrusted`. Run it in a DM instead. See
+[Channels are untrusted](../permissions/channels-are-untrusted) for why.
+
+## Scopes
+
+`setScope()` takes one or more of `'dm' | 'channel' | 'public'` — where the command may be triggered. It
+defaults to `'dm'` and `'channel'`: the firmware's Public channel is never included unless a command opts in
+explicitly, `setScope('public')` (alongside the others if it should answer everywhere). See
+[A well-behaved bot](./a-well-behaved-bot) for why Public is opt-in and what else the framework refuses by
+default.
 
 ## Go further
 
 - [Model and built-in permissions](../permissions/model-and-built-in-permissions) for `Permissions.*`.
 - [Roles and members](../permissions/roles-and-members) for member sources and hierarchy.
+- [A well-behaved bot](./a-well-behaved-bot) for scopes, rate limits and `maxHops`.
 - [RoleBuilder](../reference/classes/RoleBuilder) in the reference.

@@ -1,4 +1,4 @@
-import { type ChannelRecord, toHex } from '@meshcorejs/protocol';
+import { type ChannelRecord, PUBLIC_CHANNEL_SECRET, toHex } from '@meshcorejs/protocol';
 import type { Client } from '../client/client.js';
 import type { MessageContent } from '../messages/send-queue.js';
 import type { SentMessage } from '../messages/sent-message.js';
@@ -31,6 +31,14 @@ export class Channel {
 
   get isHashtag(): boolean {
     return this.#record.name.startsWith('#');
+  }
+
+  /** True for the firmware's built-in Public channel, identified by its secret (a renamed Public is still Public). */
+  get isPublic(): boolean {
+    const secret = this.#record.secret;
+    return (
+      secret.length === PUBLIC_CHANNEL_SECRET.length && secret.every((byte, i) => byte === PUBLIC_CHANNEL_SECRET[i])
+    );
   }
 
   /** @param content Text or MessageBuilder */

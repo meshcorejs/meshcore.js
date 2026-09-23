@@ -1,7 +1,14 @@
 import { utf8ByteLength } from '@meshcorejs/protocol';
 import { MessageBuilder } from '../builders/message-builder.js';
 import type { Client } from '../client/client.js';
-import { CommandTimeoutError, ConnectionError, DeliveryFailedError, MessageTooLongError } from '../errors.js';
+import {
+  CommandTimeoutError,
+  ConnectionError,
+  DeliveryFailedError,
+  MessageTooLongError,
+  PublicChannelError,
+  RateLimitError,
+} from '../errors.js';
 import { Channel } from '../structures/channel.js';
 import type { Contact } from '../structures/contact.js';
 import { SentMessage } from './sent-message.js';
@@ -16,6 +23,10 @@ export const SEND_INTERVAL_MS = 2000;
 export const DM_MAX_RESENDS = 3;
 /** How long a queued message may wait for the radio before it fails with `DeliveryFailedError`, not configurable. */
 export const SEND_EXPIRY_MS = 5 * 60_000;
+/** Parts a channel accepts per `CHANNEL_SEND_WINDOW_MS`; beyond it `send()` rejects with `RateLimitError`. Not configurable. */
+export const CHANNEL_SEND_LIMIT = 10;
+/** Sliding window of the per-channel outbound limit, not configurable. */
+export const CHANNEL_SEND_WINDOW_MS = 5 * 60_000;
 
 interface QueuedPart {
   message: SentMessage;
@@ -33,9 +44,14 @@ interface AckWait {
   acks: number[];
 }
 
-/** Options for `SendQueue.send()`: an extra `prefix` (a mention) counted in the target's byte budget. */
+/**
+ * Options for `SendQueue.send()`: an extra `prefix` (a mention) counted in the target's byte budget.
+ * `allowPublic` is set by the command pipeline only.
+ */
 export interface SendOptions {
   prefix?: string;
+  /** @internal */
+  allowPublic?: boolean;
 }
 
 /**
@@ -52,6 +68,7 @@ export class SendQueue {
   #busy = false;
   #closed = false;
   readonly #idleWaiters: Array<() => void> = [];
+  readonly #channelSends = new Map<number, number[]>();
 
   /** @param client Owning client */
   constructor(client: Client) {
@@ -81,6 +98,7 @@ export class SendQueue {
    */
   async send(target: Contact | Channel, content: MessageContent, options: SendOptions = {}): Promise<SentMessage> {
     if (this.#closed) throw new ConnectionError('client destroyed');
+    if (target instanceof Channel && target.isPublic && !options.allowPublic) throw new PublicChannelError();
     const prefix = target instanceof Channel ? (options.prefix ?? '') : '';
     const budget = this.budgetFor(target, prefix);
     let texts: string[];
@@ -92,6 +110,7 @@ export class SendQueue {
       if (bytes > budget) throw new MessageTooLongError(bytes, budget);
       texts = [content];
     }
+    if (target instanceof Channel) this.#reserveChannelBudget(target, texts.length);
     const message = new SentMessage(
       target,
       texts.map((text) => `${prefix}${text}`),
@@ -139,6 +158,29 @@ export class SendQueue {
       this.#clearWait(wait);
       this.#fail(wait.part.message, error);
     }
+  }
+
+  /** Sliding window per channel, counted in parts at acceptance; a message that does not fit whole is refused whole. */
+  #reserveChannelBudget(channel: Channel, parts: number): void {
+    const now = Date.now();
+    const stamps = (this.#channelSends.get(channel.index) ?? []).filter((at) => now - at < CHANNEL_SEND_WINDOW_MS);
+    this.#channelSends.set(channel.index, stamps);
+    if (parts > CHANNEL_SEND_LIMIT) {
+      throw new RateLimitError(
+        'channel',
+        channel,
+        CHANNEL_SEND_LIMIT,
+        CHANNEL_SEND_WINDOW_MS,
+        Number.POSITIVE_INFINITY,
+      );
+    }
+    const excess = stamps.length + parts - CHANNEL_SEND_LIMIT;
+    if (excess > 0) {
+      // stamps are chronological: the excess-th oldest one must expire before this message fits
+      const frees = (stamps[excess - 1] as number) + CHANNEL_SEND_WINDOW_MS - now;
+      throw new RateLimitError('channel', channel, CHANNEL_SEND_LIMIT, CHANNEL_SEND_WINDOW_MS, Math.max(0, frees));
+    }
+    for (let i = 0; i < parts; i++) stamps.push(now);
   }
 
   #pump(): void {

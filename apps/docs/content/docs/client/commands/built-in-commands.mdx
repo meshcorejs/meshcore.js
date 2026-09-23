@@ -9,8 +9,10 @@ they never collide with yours, and they are listed last in the helper.
 ## /help
 
 A bare `/` or `/help` in a DM, a bare `@Bot` or `@Bot help` on a channel, list the commands the author
-can use. One usage line per command, filtered by scope and, in a DM, by the author's permissions. A channel
-listing only shows commands that need no permission. A long list is split into up to three parts.
+can use, filtered by scope and, in a DM, by the author's permissions. A channel listing only shows commands
+that need no permission. In a DM the answer is one usage line per command, split into up to three parts when
+it is long; on a channel it is a single line with the command names (`helperChannel`), trimmed to fit the
+budget.
 
 ## /plugins
 

@@ -31,6 +31,7 @@ const bot = await createTestClient({ load?, self?, now?, maxChannels? = 8, radio
 bot.client; bot.radio; bot.transport; bot.clock          // underlying objects
 bot.fakeContact(name, overrides?): Contact               // adds a contact to the radio and the cache
 bot.fakeChannel(name, secret?): Channel                  // first free slot
+bot.fakeChannel('Public', PUBLIC_CHANNEL_SECRET): Channel  // a Public channel (secret from '@meshcorejs/protocol')
 bot.setRoleMembers(role, [contact | key]): void          // overrides the role's member source for the test
 await bot.dm(contact | name, '/cmd …'): string[]         // texts sent by the bot while handling it
 await bot.channel('#name', authorName, '@Bot cmd …'): string[]

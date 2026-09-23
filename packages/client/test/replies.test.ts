@@ -12,7 +12,7 @@ describe('Replies presets', () => {
     expect(englishReplies.cooldown(20)).toBe('⏳ Try again in 20s');
     expect(englishReplies.invalidArgument('numero', '/train <numero>')).toBe('⚠️ numero is invalid\n/train <numero>');
     expect(frenchReplies.unknownCommandDM).toBe('❓ Commande inconnue, /help');
-    expect(frenchReplies.channelUntrusted).toBe('↪️ Envoie-moi cette commande en DM');
+    expect(frenchReplies.helperChannel(['train'])).toBe('Commandes : train · /help en DM');
     expect(frenchReplies.cooldown(20)).toBe('⏳ Réessaie dans 20s');
     expect(frenchReplies.invalidArgument('numero', '/train <numero>')).toBe('⚠️ numero invalide\n/train <numero>');
   });

@@ -50,8 +50,10 @@ interface Transport extends TypedEmitter<{ frame: [Uint8Array]; close: [Error?] 
   `channels`, `clock`, `suggestedTimeoutMs`, `selfAdvertPacket`), `AckMode = 'auto' | 'manual' | 'never'`,
   `FakeSentMessage` (`kind: 'dm' | 'channel'`), `fakeContactRecord(partial)`.
 - `FakeRadio` runtime knobs: `attach(transport)`, `sent[]`, `commands[]`, `ackMode`, `ackDelayMs`,
-  `unresponsive`, `batteryMillivolts`, `receiveContactMessage()`, `receiveChannelMessage()`, `hearAdvert()`,
-  `updatePath()`, `deleteContact()`, `ack(expectedAck, roundTripMs)`.
+  `unresponsive`, `refuseSelfAdvert` (when true, `SEND_SELF_ADVERT` answers `Err BadState` instead of `Ok` —
+  for testing a firmware refusal, as opposed to `unresponsive`'s timeout), `batteryMillivolts`,
+  `receiveContactMessage()`, `receiveChannelMessage()`, `hearAdvert()`, `updatePath()`, `deleteContact()`,
+  `ack(expectedAck, roundTripMs)`.
 
 ## Rules
 

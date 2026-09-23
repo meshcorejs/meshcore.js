@@ -20,6 +20,7 @@ from the folders next to `main.ts`.
 | `logger`    | A `Logger`. Defaults to `createConsoleLogger()`. `silentLogger` disables logging.                  |
 | `appName`   | The name announced to the radio. Defaults to `meshcore.js`.                                        |
 | `load`      | The folder scanned for bricks at login, usually `import.meta.dirname`. See [Bricks and loading](./bricks-and-loading). |
+| `maxHops`   | Bounds how far a message may have travelled for the bot to answer it. Integer ≥ 0; unset means no limit. See [A well-behaved bot](../guides/a-well-behaved-bot). |
 
 ## The login sequence
 
@@ -38,6 +39,10 @@ from the folders next to `main.ts`.
    `message.backlog` set to `true`.
 10. Start the jobs.
 11. Emit `ready`.
+
+Step 6 floods one advert when the name or location changed. That counts against the one-flood-per-30-minutes
+limit (see [A well-behaved bot](../guides/a-well-behaved-bot)): if a flood already went out in the last 30
+minutes, `login()` logs a warning and continues instead of failing.
 
 ## Caches and managers
 

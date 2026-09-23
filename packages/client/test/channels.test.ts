@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { toHex } from '@meshcorejs/protocol';
+import { PUBLIC_CHANNEL_SECRET, toHex } from '@meshcorejs/protocol';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { LimitReachedError, MeshcoreError } from '../src/errors.js';
 import { hashtagChannelSecret } from '../src/managers/channel-manager.js';
@@ -66,5 +66,20 @@ describe('ChannelManager', () => {
       ['#lyon', undefined],
       ['Public', undefined],
     ]);
+  });
+});
+
+describe('Channel.isPublic', () => {
+  it('recognises Public by its secret, whatever its name', async () => {
+    const { client } = await setupClient({
+      channels: [
+        { index: 0, name: 'Public', secret: PUBLIC_CHANNEL_SECRET },
+        { index: 1, name: 'Public', secret: new Uint8Array(16) },
+        { index: 2, name: 'Général', secret: Uint8Array.from(PUBLIC_CHANNEL_SECRET) },
+      ],
+    });
+    expect(client.channels.get(0)!.isPublic).toBe(true);
+    expect(client.channels.get(1)!.isPublic).toBe(false);
+    expect(client.channels.get(2)!.isPublic).toBe(true);
   });
 });

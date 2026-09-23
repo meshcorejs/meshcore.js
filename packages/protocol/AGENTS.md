@@ -52,7 +52,8 @@ test/
   `encode<Name>Push` for every push.
 - **Constants**: `CommandCode`, `ResponseCode`, `PushCode`, `RadioErrorCode`, `ContactType`, `TxtType`,
   `MAX_FRAME_SIZE = 176`, `MAX_TEXT_LEN = 160`, `PUB_KEY_SIZE = 32`, `PUB_KEY_PREFIX_SIZE = 6`,
-  `MAX_PATH_SIZE = 64`, `NAME_FIELD_SIZE = 32`, `CHANNEL_SECRET_SIZE = 16`, `OUT_PATH_UNKNOWN = 0xff`,
+  `MAX_PATH_SIZE = 64`, `NAME_FIELD_SIZE = 32`, `CHANNEL_SECRET_SIZE = 16`, `PUBLIC_CHANNEL_SECRET`
+  (the built-in Public channel's secret, identify Public by it, never by name), `OUT_PATH_UNKNOWN = 0xff`,
   `APP_TARGET_VERSION = 3`, `MIN_FIRMWARE_VERSION = 3`.
 - **Helpers**: `ByteReader`, `ByteWriter`, `toHex`, `fromHex`, `utf8ByteLength`, key/path/contact-URI
   helpers listed in Layout.

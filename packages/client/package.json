@@ -50,6 +50,6 @@
   "dependencies": {
     "@meshcorejs/protocol": "workspace:*",
     "@meshcorejs/transports": "workspace:*",
-    "croner": "^10.0.1"
+    "croner": "^11.0.0"
   }
 }

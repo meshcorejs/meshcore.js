@@ -50,7 +50,7 @@
   "dependencies": {
     "@meshcorejs/protocol": "workspace:*",
     "@meshcorejs/transports": "workspace:*",
-    "@sinonjs/fake-timers": "^15.0.1"
+    "@sinonjs/fake-timers": "^15.5.0"
   },
   "peerDependencies": {
     "@meshcorejs/client": "workspace:^"
